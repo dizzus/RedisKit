@@ -51,6 +51,20 @@
                BlueprintName = "RedisKitTests"
                ReferencedContainer = "container:RedisKit.xcodeproj">
             </BuildableReference>
+            <SkippedTests>
+               <Test
+                  Identifier = "HashesCommands/test_HSTRLEN">
+               </Test>
+               <Test
+                  Identifier = "PubSubCommands">
+               </Test>
+               <Test
+                  Identifier = "ServerCommands/test_BGSAVE">
+               </Test>
+               <Test
+                  Identifier = "ServerCommands/test_CLIENT_LIST">
+               </Test>
+            </SkippedTests>
          </TestableReference>
       </Testables>
       <MacroExpansion>
@@ -82,6 +96,26 @@
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
+         <AdditionalOption
+            key = "DYLD_INSERT_LIBRARIES"
+            value = "/usr/lib/libgmalloc.dylib"
+            isEnabled = "YES">
+         </AdditionalOption>
+         <AdditionalOption
+            key = "NSZombieEnabled"
+            value = "YES"
+            isEnabled = "YES">
+         </AdditionalOption>
+         <AdditionalOption
+            key = "MallocGuardEdges"
+            value = ""
+            isEnabled = "YES">
+         </AdditionalOption>
+         <AdditionalOption
+            key = "MallocScribble"
+            value = ""
+            isEnabled = "YES">
+         </AdditionalOption>
       </AdditionalOptions>
    </LaunchAction>
    <ProfileAction

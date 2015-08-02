@@ -7,9 +7,41 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		66322C121B63841F00FBA9C8 /* BasicTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 66322C111B63841F00FBA9C8 /* BasicTests.m */; };
+		66322C141B6385D200FBA9C8 /* StringsCommands.m in Sources */ = {isa = PBXBuildFile; fileRef = 66322C131B6385D200FBA9C8 /* StringsCommands.m */; };
+		66322C161B64C97900FBA9C8 /* KeysCommands.m in Sources */ = {isa = PBXBuildFile; fileRef = 66322C151B64C97900FBA9C8 /* KeysCommands.m */; };
+		66322C181B64DCC400FBA9C8 /* ListsCommands.m in Sources */ = {isa = PBXBuildFile; fileRef = 66322C171B64DCC400FBA9C8 /* ListsCommands.m */; };
+		66322C1A1B654BE400FBA9C8 /* SetsCommands.m in Sources */ = {isa = PBXBuildFile; fileRef = 66322C191B654BE400FBA9C8 /* SetsCommands.m */; };
 		665C84031B5D57DF00F6C4C1 /* RedisKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 665C84021B5D57DF00F6C4C1 /* RedisKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		665C84091B5D57DF00F6C4C1 /* RedisKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 665C83FD1B5D57DF00F6C4C1 /* RedisKit.framework */; };
-		665C84101B5D57DF00F6C4C1 /* RedisKitTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 665C840F1B5D57DF00F6C4C1 /* RedisKitTests.m */; };
+		665C84281B5D586000F6C4C1 /* async.c in Sources */ = {isa = PBXBuildFile; fileRef = 665C841A1B5D586000F6C4C1 /* async.c */; };
+		665C84291B5D586000F6C4C1 /* async.h in Headers */ = {isa = PBXBuildFile; fileRef = 665C841B1B5D586000F6C4C1 /* async.h */; };
+		665C842A1B5D586000F6C4C1 /* dict.c in Sources */ = {isa = PBXBuildFile; fileRef = 665C841C1B5D586000F6C4C1 /* dict.c */; };
+		665C842B1B5D586000F6C4C1 /* dict.h in Headers */ = {isa = PBXBuildFile; fileRef = 665C841D1B5D586000F6C4C1 /* dict.h */; };
+		665C842C1B5D586000F6C4C1 /* fmacros.h in Headers */ = {isa = PBXBuildFile; fileRef = 665C841E1B5D586000F6C4C1 /* fmacros.h */; };
+		665C842D1B5D586000F6C4C1 /* hiredis.c in Sources */ = {isa = PBXBuildFile; fileRef = 665C841F1B5D586000F6C4C1 /* hiredis.c */; };
+		665C842E1B5D586000F6C4C1 /* hiredis.h in Headers */ = {isa = PBXBuildFile; fileRef = 665C84201B5D586000F6C4C1 /* hiredis.h */; };
+		665C842F1B5D586000F6C4C1 /* net.c in Sources */ = {isa = PBXBuildFile; fileRef = 665C84211B5D586000F6C4C1 /* net.c */; };
+		665C84301B5D586000F6C4C1 /* net.h in Headers */ = {isa = PBXBuildFile; fileRef = 665C84221B5D586000F6C4C1 /* net.h */; };
+		665C84311B5D586000F6C4C1 /* read.c in Sources */ = {isa = PBXBuildFile; fileRef = 665C84231B5D586000F6C4C1 /* read.c */; };
+		665C84321B5D586000F6C4C1 /* read.h in Headers */ = {isa = PBXBuildFile; fileRef = 665C84241B5D586000F6C4C1 /* read.h */; };
+		665C84331B5D586000F6C4C1 /* sds.c in Sources */ = {isa = PBXBuildFile; fileRef = 665C84251B5D586000F6C4C1 /* sds.c */; };
+		665C84341B5D586000F6C4C1 /* sds.h in Headers */ = {isa = PBXBuildFile; fileRef = 665C84261B5D586000F6C4C1 /* sds.h */; };
+		665C84351B5D586000F6C4C1 /* win32.h in Headers */ = {isa = PBXBuildFile; fileRef = 665C84271B5D586000F6C4C1 /* win32.h */; };
+		665C84391B5D589200F6C4C1 /* CocoaPromise.h in Headers */ = {isa = PBXBuildFile; fileRef = 665C84371B5D589200F6C4C1 /* CocoaPromise.h */; };
+		665C843A1B5D589200F6C4C1 /* CocoaPromise.m in Sources */ = {isa = PBXBuildFile; fileRef = 665C84381B5D589200F6C4C1 /* CocoaPromise.m */; };
+		665C843C1B5D595300F6C4C1 /* CocoaRedis.m in Sources */ = {isa = PBXBuildFile; fileRef = 665C843B1B5D595300F6C4C1 /* CocoaRedis.m */; };
+		665C843F1B5D5F4C00F6C4C1 /* macosx.h in Headers */ = {isa = PBXBuildFile; fileRef = 665C843E1B5D5F4C00F6C4C1 /* macosx.h */; };
+		6664A32F1B6A4FD300067E96 /* ConnectionCommands.m in Sources */ = {isa = PBXBuildFile; fileRef = 6664A32E1B6A4FD300067E96 /* ConnectionCommands.m */; };
+		6664A3311B6A617700067E96 /* GeoCommands.m in Sources */ = {isa = PBXBuildFile; fileRef = 6664A3301B6A617700067E96 /* GeoCommands.m */; };
+		6664A3331B6B967F00067E96 /* HyperLogLogCommands.m in Sources */ = {isa = PBXBuildFile; fileRef = 6664A3321B6B967F00067E96 /* HyperLogLogCommands.m */; };
+		6664A3351B6BAB0C00067E96 /* RedisTestCase.m in Sources */ = {isa = PBXBuildFile; fileRef = 6664A3341B6BAB0C00067E96 /* RedisTestCase.m */; };
+		6664A3381B6BB01900067E96 /* TranscationsCommands.m in Sources */ = {isa = PBXBuildFile; fileRef = 6664A3371B6BB01900067E96 /* TranscationsCommands.m */; };
+		66B4D8501B68DCD900EEA922 /* SortedSetsCommands.m in Sources */ = {isa = PBXBuildFile; fileRef = 66B4D84F1B68DCD900EEA922 /* SortedSetsCommands.m */; };
+		66B754F61B681C5900BB822B /* HashesCommands.m in Sources */ = {isa = PBXBuildFile; fileRef = 66B754F51B681C5900BB822B /* HashesCommands.m */; };
+		66E42BC51B6CD7D000BB6E24 /* ServerCommands.m in Sources */ = {isa = PBXBuildFile; fileRef = 66E42BC41B6CD7D000BB6E24 /* ServerCommands.m */; };
+		66F9868D1B6D77A700F00C24 /* ScriptingCommands.m in Sources */ = {isa = PBXBuildFile; fileRef = 66F9868C1B6D77A700F00C24 /* ScriptingCommands.m */; };
+		66F9868F1B6D8B0F00F00C24 /* PubSubCommands.m in Sources */ = {isa = PBXBuildFile; fileRef = 66F9868E1B6D8B0F00F00C24 /* PubSubCommands.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -23,12 +55,46 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		66322C111B63841F00FBA9C8 /* BasicTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BasicTests.m; sourceTree = "<group>"; };
+		66322C131B6385D200FBA9C8 /* StringsCommands.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StringsCommands.m; sourceTree = "<group>"; };
+		66322C151B64C97900FBA9C8 /* KeysCommands.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KeysCommands.m; sourceTree = "<group>"; };
+		66322C171B64DCC400FBA9C8 /* ListsCommands.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ListsCommands.m; sourceTree = "<group>"; };
+		66322C191B654BE400FBA9C8 /* SetsCommands.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SetsCommands.m; sourceTree = "<group>"; };
 		665C83FD1B5D57DF00F6C4C1 /* RedisKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = RedisKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		665C84011B5D57DF00F6C4C1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		665C84021B5D57DF00F6C4C1 /* RedisKit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RedisKit.h; sourceTree = "<group>"; };
 		665C84081B5D57DF00F6C4C1 /* RedisKitTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RedisKitTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		665C840E1B5D57DF00F6C4C1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		665C840F1B5D57DF00F6C4C1 /* RedisKitTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RedisKitTests.m; sourceTree = "<group>"; };
+		665C841A1B5D586000F6C4C1 /* async.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = async.c; sourceTree = "<group>"; };
+		665C841B1B5D586000F6C4C1 /* async.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = async.h; sourceTree = "<group>"; };
+		665C841C1B5D586000F6C4C1 /* dict.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dict.c; sourceTree = "<group>"; };
+		665C841D1B5D586000F6C4C1 /* dict.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dict.h; sourceTree = "<group>"; };
+		665C841E1B5D586000F6C4C1 /* fmacros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fmacros.h; sourceTree = "<group>"; };
+		665C841F1B5D586000F6C4C1 /* hiredis.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = hiredis.c; sourceTree = "<group>"; };
+		665C84201B5D586000F6C4C1 /* hiredis.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = hiredis.h; sourceTree = "<group>"; };
+		665C84211B5D586000F6C4C1 /* net.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = net.c; sourceTree = "<group>"; };
+		665C84221B5D586000F6C4C1 /* net.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = net.h; sourceTree = "<group>"; };
+		665C84231B5D586000F6C4C1 /* read.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = read.c; sourceTree = "<group>"; };
+		665C84241B5D586000F6C4C1 /* read.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = read.h; sourceTree = "<group>"; };
+		665C84251B5D586000F6C4C1 /* sds.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sds.c; sourceTree = "<group>"; };
+		665C84261B5D586000F6C4C1 /* sds.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sds.h; sourceTree = "<group>"; };
+		665C84271B5D586000F6C4C1 /* win32.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = win32.h; sourceTree = "<group>"; };
+		665C84371B5D589200F6C4C1 /* CocoaPromise.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CocoaPromise.h; sourceTree = "<group>"; };
+		665C84381B5D589200F6C4C1 /* CocoaPromise.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CocoaPromise.m; sourceTree = "<group>"; };
+		665C843B1B5D595300F6C4C1 /* CocoaRedis.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CocoaRedis.m; sourceTree = "<group>"; };
+		665C843D1B5D597700F6C4C1 /* CocoaRedis.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CocoaRedis.h; sourceTree = "<group>"; };
+		665C843E1B5D5F4C00F6C4C1 /* macosx.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = macosx.h; sourceTree = "<group>"; };
+		6664A32E1B6A4FD300067E96 /* ConnectionCommands.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ConnectionCommands.m; sourceTree = "<group>"; };
+		6664A3301B6A617700067E96 /* GeoCommands.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeoCommands.m; sourceTree = "<group>"; };
+		6664A3321B6B967F00067E96 /* HyperLogLogCommands.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HyperLogLogCommands.m; sourceTree = "<group>"; };
+		6664A3341B6BAB0C00067E96 /* RedisTestCase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RedisTestCase.m; sourceTree = "<group>"; };
+		6664A3361B6BAB2800067E96 /* RedisTestCase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RedisTestCase.h; sourceTree = "<group>"; };
+		6664A3371B6BB01900067E96 /* TranscationsCommands.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TranscationsCommands.m; sourceTree = "<group>"; };
+		66B4D84F1B68DCD900EEA922 /* SortedSetsCommands.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SortedSetsCommands.m; sourceTree = "<group>"; };
+		66B754F51B681C5900BB822B /* HashesCommands.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HashesCommands.m; sourceTree = "<group>"; };
+		66E42BC41B6CD7D000BB6E24 /* ServerCommands.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ServerCommands.m; sourceTree = "<group>"; };
+		66F9868C1B6D77A700F00C24 /* ScriptingCommands.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScriptingCommands.m; sourceTree = "<group>"; };
+		66F9868E1B6D8B0F00F00C24 /* PubSubCommands.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PubSubCommands.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -53,6 +119,8 @@
 		665C83F31B5D57DF00F6C4C1 = {
 			isa = PBXGroup;
 			children = (
+				665C84361B5D586700F6C4C1 /* Promises */,
+				665C84191B5D57F900F6C4C1 /* HiRedis */,
 				665C83FF1B5D57DF00F6C4C1 /* RedisKit */,
 				665C840C1B5D57DF00F6C4C1 /* RedisKitTests */,
 				665C83FE1B5D57DF00F6C4C1 /* Products */,
@@ -72,6 +140,8 @@
 			isa = PBXGroup;
 			children = (
 				665C84021B5D57DF00F6C4C1 /* RedisKit.h */,
+				665C843D1B5D597700F6C4C1 /* CocoaRedis.h */,
+				665C843B1B5D595300F6C4C1 /* CocoaRedis.m */,
 				665C84001B5D57DF00F6C4C1 /* Supporting Files */,
 			);
 			path = RedisKit;
@@ -88,7 +158,22 @@
 		665C840C1B5D57DF00F6C4C1 /* RedisKitTests */ = {
 			isa = PBXGroup;
 			children = (
-				665C840F1B5D57DF00F6C4C1 /* RedisKitTests.m */,
+				6664A3361B6BAB2800067E96 /* RedisTestCase.h */,
+				6664A3341B6BAB0C00067E96 /* RedisTestCase.m */,
+				66322C111B63841F00FBA9C8 /* BasicTests.m */,
+				66322C131B6385D200FBA9C8 /* StringsCommands.m */,
+				66322C151B64C97900FBA9C8 /* KeysCommands.m */,
+				66322C171B64DCC400FBA9C8 /* ListsCommands.m */,
+				66322C191B654BE400FBA9C8 /* SetsCommands.m */,
+				66B754F51B681C5900BB822B /* HashesCommands.m */,
+				66B4D84F1B68DCD900EEA922 /* SortedSetsCommands.m */,
+				6664A32E1B6A4FD300067E96 /* ConnectionCommands.m */,
+				6664A3301B6A617700067E96 /* GeoCommands.m */,
+				6664A3321B6B967F00067E96 /* HyperLogLogCommands.m */,
+				6664A3371B6BB01900067E96 /* TranscationsCommands.m */,
+				66E42BC41B6CD7D000BB6E24 /* ServerCommands.m */,
+				66F9868C1B6D77A700F00C24 /* ScriptingCommands.m */,
+				66F9868E1B6D8B0F00F00C24 /* PubSubCommands.m */,
 				665C840D1B5D57DF00F6C4C1 /* Supporting Files */,
 			);
 			path = RedisKitTests;
@@ -102,6 +187,37 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		665C84191B5D57F900F6C4C1 /* HiRedis */ = {
+			isa = PBXGroup;
+			children = (
+				665C843E1B5D5F4C00F6C4C1 /* macosx.h */,
+				665C841A1B5D586000F6C4C1 /* async.c */,
+				665C841B1B5D586000F6C4C1 /* async.h */,
+				665C841C1B5D586000F6C4C1 /* dict.c */,
+				665C841D1B5D586000F6C4C1 /* dict.h */,
+				665C841E1B5D586000F6C4C1 /* fmacros.h */,
+				665C841F1B5D586000F6C4C1 /* hiredis.c */,
+				665C84201B5D586000F6C4C1 /* hiredis.h */,
+				665C84211B5D586000F6C4C1 /* net.c */,
+				665C84221B5D586000F6C4C1 /* net.h */,
+				665C84231B5D586000F6C4C1 /* read.c */,
+				665C84241B5D586000F6C4C1 /* read.h */,
+				665C84251B5D586000F6C4C1 /* sds.c */,
+				665C84261B5D586000F6C4C1 /* sds.h */,
+				665C84271B5D586000F6C4C1 /* win32.h */,
+			);
+			name = HiRedis;
+			sourceTree = "<group>";
+		};
+		665C84361B5D586700F6C4C1 /* Promises */ = {
+			isa = PBXGroup;
+			children = (
+				665C84371B5D589200F6C4C1 /* CocoaPromise.h */,
+				665C84381B5D589200F6C4C1 /* CocoaPromise.m */,
+			);
+			name = Promises;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -109,7 +225,17 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				665C84391B5D589200F6C4C1 /* CocoaPromise.h in Headers */,
+				665C84301B5D586000F6C4C1 /* net.h in Headers */,
+				665C842E1B5D586000F6C4C1 /* hiredis.h in Headers */,
 				665C84031B5D57DF00F6C4C1 /* RedisKit.h in Headers */,
+				665C84351B5D586000F6C4C1 /* win32.h in Headers */,
+				665C842B1B5D586000F6C4C1 /* dict.h in Headers */,
+				665C842C1B5D586000F6C4C1 /* fmacros.h in Headers */,
+				665C84341B5D586000F6C4C1 /* sds.h in Headers */,
+				665C84321B5D586000F6C4C1 /* read.h in Headers */,
+				665C843F1B5D5F4C00F6C4C1 /* macosx.h in Headers */,
+				665C84291B5D586000F6C4C1 /* async.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -209,6 +335,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				665C84331B5D586000F6C4C1 /* sds.c in Sources */,
+				665C84311B5D586000F6C4C1 /* read.c in Sources */,
+				665C84281B5D586000F6C4C1 /* async.c in Sources */,
+				665C843C1B5D595300F6C4C1 /* CocoaRedis.m in Sources */,
+				665C842F1B5D586000F6C4C1 /* net.c in Sources */,
+				665C842D1B5D586000F6C4C1 /* hiredis.c in Sources */,
+				665C842A1B5D586000F6C4C1 /* dict.c in Sources */,
+				665C843A1B5D589200F6C4C1 /* CocoaPromise.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -216,7 +350,21 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				665C84101B5D57DF00F6C4C1 /* RedisKitTests.m in Sources */,
+				66F9868F1B6D8B0F00F00C24 /* PubSubCommands.m in Sources */,
+				66322C1A1B654BE400FBA9C8 /* SetsCommands.m in Sources */,
+				6664A32F1B6A4FD300067E96 /* ConnectionCommands.m in Sources */,
+				66B754F61B681C5900BB822B /* HashesCommands.m in Sources */,
+				66F9868D1B6D77A700F00C24 /* ScriptingCommands.m in Sources */,
+				66322C121B63841F00FBA9C8 /* BasicTests.m in Sources */,
+				6664A3381B6BB01900067E96 /* TranscationsCommands.m in Sources */,
+				66B4D8501B68DCD900EEA922 /* SortedSetsCommands.m in Sources */,
+				6664A3311B6A617700067E96 /* GeoCommands.m in Sources */,
+				66E42BC51B6CD7D000BB6E24 /* ServerCommands.m in Sources */,
+				6664A3351B6BAB0C00067E96 /* RedisTestCase.m in Sources */,
+				6664A3331B6B967F00067E96 /* HyperLogLogCommands.m in Sources */,
+				66322C161B64C97900FBA9C8 /* KeysCommands.m in Sources */,
+				66322C141B6385D200FBA9C8 /* StringsCommands.m in Sources */,
+				66322C181B64DCC400FBA9C8 /* ListsCommands.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -396,6 +544,7 @@
 				665C84151B5D57DF00F6C4C1 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		665C84161B5D57DF00F6C4C1 /* Build configuration list for PBXNativeTarget "RedisKitTests" */ = {
 			isa = XCConfigurationList;
@@ -404,6 +553,7 @@
 				665C84181B5D57DF00F6C4C1 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
