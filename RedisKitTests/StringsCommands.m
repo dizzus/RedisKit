@@ -19,7 +19,7 @@
     const NSString* key = [self randomKey];
     
     [[[
-    [[self.redis command: @[@"EXISTS", key]] then:^id(id value) {
+    [[self.redis exists:key] then:^id(id value) {
         XCTAssertEqualObjects(value, @0);
         return [self.redis append:key value:@"Hello"];
     }] then:^id(id value) {

@@ -2116,5 +2116,182 @@ static void CollectZSetKeys(CocoaRedis* redis, id key, CocoaPromise* cursorPromi
 }
 
 
+#pragma mark - CLUSTER
+
+#pragma mark - CLUSTER ADDSLOTS
+- (CocoaPromise*) clusterAddSlot: (NSInteger)slot {
+    return [self command:@[@"CLUSTER", @"ADDSLOTS", [NSNumber numberWithInteger:slot]]];
+}
+
+- (CocoaPromise*) clusterAddSlots: (NSArray*)slots {
+    NSMutableArray* args = [NSMutableArray arrayWithObjects:@"CLUSTER", @"ADDSLOTS", nil];
+    [args addObjectsFromArray: slots];
+    return [self command:args];
+}
+
+#pragma mark CLUSTER COUNT-FAILURE-REPORTS
+- (CocoaPromise*) clusterCountFailureReports: (id)nodeId {
+    return [self command:@[@"CLUSTER", @"COUNT-FAILURE-REPORTS"]];
+}
+
+#pragma mark CLUSTER COUNTKEYSINSLOT
+- (CocoaPromise*) clusterCountKeysInSlot: (NSInteger)slot {
+    return [self command:@[@"CLUSTER", @"COUNTKEYSINSLOT", [NSNumber numberWithInteger:slot]]];
+}
+
+#pragma mark - CLUSTER DELSLOTS
+- (CocoaPromise*) clusterDelSlot: (NSInteger)slot {
+    return [self command:@[@"CLUSTER", @"DELSLOTS", [NSNumber numberWithInteger:slot]]];
+}
+
+- (CocoaPromise*) clusterDelSlots: (NSArray*)slots {
+    NSMutableArray* args = [NSMutableArray arrayWithObjects:@"CLUSTER", @"DELSLOTS", nil];
+    [args addObjectsFromArray: slots];
+    return [self command:args];
+}
+
+#pragma mark CLUSTER FAILOVER
+- (CocoaPromise*) clusterFailoverForce {
+    return [self command:@[@"CLUSTER", @"FAILOVER", @"FORCE"]];
+}
+
+- (CocoaPromise*) clusterFailoverTakeover {
+    return [self command:@[@"CLUSTER", @"FAILOVER", @"TAKEOVER"]];
+}
+
+#pragma mark CLUSTER FORGET
+- (CocoaPromise*) clusterForget: (NSString*)nodeId {
+    return [self command:@[@"CLUSTER", @"FORGET", nodeId]];
+}
+
+#pragma mark CLUSTER GETKEYSINSLOT
+- (CocoaPromise*) clusterGetKeysInSlot: (NSInteger)slot count:(NSInteger)count {
+    return [self command:@[@"CLUSTER", @"GETKEYSINSLOT", [NSNumber numberWithInteger:slot], [NSNumber numberWithInteger:count]]];
+}
+
+#pragma mark CLUSTER INFO
+- (CocoaPromise *)clusterInfo {
+    return PromiseNSDict( [self command:@[@"CLUSTER", @"INFO"]], nil );
+}
+
+#pragma mark CLUSTER KEYSLOT
+- (CocoaPromise*) clusterKeyslot: (id)key {
+    return [self command:@[@"CLUSTER", @"KEYSLOT", key]];
+}
+
+#pragma mark CLUSTER MEET
+- (CocoaPromise*) clusterMeetIP: (NSString*)ip port: (NSInteger)port {
+    return [self command:@[@"CLUSTER", @"MEET", ip, [NSNumber numberWithInteger:port]]];
+}
+
+#pragma mark CLUSTER NODES
+- (CocoaPromise*) clusterNodes {
+    return [[self command: @[@"CLUSTER", @"NODES"]] then:^id(id value) {
+
+        NSMutableArray *result = [NSMutableArray new];
+        
+        for( NSString* line in [value componentsSeparatedByString: @"\r\n"] ) {
+            if( line.length == 0 ) continue;
+            NSArray* items = [line componentsSeparatedByString: @" "];
+            
+            NSDictionary* node = @{
+                @"id": items[0],
+                @"address": items[1],
+                @"flags": items[2],
+                @"master": items[3],
+                @"ping-sent": [NSDate dateWithTimeIntervalSince1970: [items[4] integerValue]],
+                @"ping-recv": [NSDate dateWithTimeIntervalSince1970: [items[5] integerValue]],
+                @"config-epoch": items[6],
+                @"link-state": items[7],
+                @"slot": [items subarrayWithRange: NSMakeRange(8, items.count)]
+            };
+            
+            [result addObject: node];
+        }
+        
+        return result;
+
+    }];
+}
+
+#pragma mark CLUSTER REPLICATE
+- (CocoaPromise*) clusterReplicate: (NSString*)nodeId {
+    return [self command:@[@"CLUSTER", @"REPLICATE", nodeId]];
+}
+
+#pragma mark CLUSTER RESET
+- (CocoaPromise*) clusterResetHard {
+    return [self command:@[@"CLUSTER", @"RESET", @"HARD"]];
+}
+
+- (CocoaPromise*) clusterResetSoft {
+    return [self command:@[@"CLUSTER", @"RESET", @"SOFT"]];
+}
+
+#pragma mark CLUSTER SAVECONFIG
+- (CocoaPromise*) clusterSaveConfig {
+    return [self command:@[@"CLUSTER", @"SAVECONFIG"]];
+}
+
+#pragma mark CLUSTER SET-CONFIG-EPOCH
+/** http://redis.io/commands/cluster-set-config-epoch */
+- (CocoaPromise*) clusterSetConfigEpoch: (NSInteger)epoch {
+    return [self command:@[@"CLUSTER", @"SET-CONFIG-EPOCH", [NSNumber numberWithInteger:epoch]]];
+}
+
+#pragma mark CLUSTER SETSLOT
+- (CocoaPromise*) clusterSetSlotImporting: (NSInteger)slot {
+    return [self command:@[@"CLUSTER", @"SETSLOT", [NSNumber numberWithInteger:slot], @"IMPORTING"]];
+}
+
+- (CocoaPromise*) clusterSetSlotMigrating: (NSInteger)slot {
+    return [self command:@[@"CLUSTER", @"SETSLOT", [NSNumber numberWithInteger:slot], @"MIGRATING"]];
+}
+
+- (CocoaPromise*) clusterSetSlotStable: (NSInteger)slot {
+    return [self command:@[@"CLUSTER", @"SETSLOT", [NSNumber numberWithInteger:slot], @"STABLE"]];
+}
+
+- (CocoaPromise*) clusterSetSlot: (NSInteger)slot node: (NSString*)nodeId {
+    return [self command:@[@"CLUSTER", @"SETSLOT", [NSNumber numberWithInteger:slot], @"NODE", nodeId]];
+}
+
+#pragma mark CLUSTER SLAVES
+- (CocoaPromise*) clusterSlaves: (NSString*)nodeId {
+    return [self command:@[@"CLUSTER", @"SLAVES", nodeId]];
+}
+
+#pragma mark CLUSTER SLOTS
+/** http://redis.io/commands/cluster-slots */
+- (CocoaPromise*) clusterSlots {
+    return [[self command:@[@"CLUSTER", @"SLOTS"]] then:^id(id value) {
+        
+        NSMutableArray* result = [NSMutableArray new];
+
+        for( NSArray* item in value ) {
+            NSMutableArray* replicas = [NSMutableArray new];
+
+            NSDictionary* slotInfo = @{
+                @"start-slot": item[0],
+                @"end-slot": item[1],
+                @"master": [NSString stringWithFormat:@"%@:%@", item[2][0], item[2][1]],
+                @"replicas": replicas
+            };
+            
+            for( NSUInteger i = 3; i < item.count; ++i ) {
+                NSString* replicaAddr = [NSString stringWithFormat: @"%@:%@", item[i][0], item[i][1]];
+                [replicas addObject: replicaAddr];
+            }
+        
+            [result addObject: slotInfo];
+        }
+        
+        return result;
+    }];
+}
+
+
+
+
 @end
 

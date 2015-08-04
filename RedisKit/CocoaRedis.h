@@ -808,29 +808,116 @@ extern NSString * const CocoaRedisMessageNotification;
 #pragma mark - PUB/SUB
 
 #pragma mark - PSUBSCRIBE
+/** http://redis.io/commands/psubscribe */
 - (CocoaPromise*) psubscribe: (NSString*)pattern;
 - (CocoaPromise*) psubscribePatterns: (NSArray*)pattern;
 
 #pragma mark PUBSUB
+/** http://redis.io/commands/pubsub */
 - (CocoaPromise*) pubsubActiveChannels;
 - (CocoaPromise*) pubsubActiveChannels: (NSString*)pattern;
 - (CocoaPromise*) pubsubSubscribers: (NSArray*)channels;
 - (CocoaPromise*) pubsubPatternsCount;
 
 #pragma mark PUBLISH
+/** http://redis.io/commands/publish */
 - (CocoaPromise*) publish: (NSString*)channel message: (NSString*)message;
 
 #pragma mark PUNSUBSCRIBE
+/** http://redis.io/commands/punsubscribe */
 - (CocoaPromise*) punsubscribe;
 - (CocoaPromise*) punsubscribe: (NSArray*)patterns;
 
 #pragma mark SUBSCRIBE
+/** http://redis.io/commands/subscribe */
 - (CocoaPromise*) subscribe: (NSString*)channel;
 - (CocoaPromise*) subscribeChannels: (NSArray*)channels;
 
 #pragma mark UNSUBSCRIBE
+/** http://redis.io/commands/unsubscribe */
 - (CocoaPromise*) unsubscribe;
 - (CocoaPromise*) unsubscribeChannels: (NSArray*)channels;
+
+#pragma mark - CLUSTER
+
+#pragma mark - CLUSTER ADDSLOTS
+/** http://redis.io/commands/cluster-addslots */
+- (CocoaPromise*) clusterAddSlot: (NSInteger)slot;
+- (CocoaPromise*) clusterAddSlots: (NSArray*)slots;
+
+#pragma mark CLUSTER COUNT-FAILURE-REPORTS
+/** http://redis.io/commands/cluster-count-failure-reports */
+- (CocoaPromise*) clusterCountFailureReports: (id)nodeId;
+
+#pragma mark CLUSTER COUNTKEYSINSLOT
+/** http://redis.io/commands/cluster-countkeysinslot */
+- (CocoaPromise*) clusterCountKeysInSlot: (NSInteger)slot;
+
+#pragma mark CLUSTER DELSLOTS
+/** http://redis.io/commands/cluster-delslots */
+- (CocoaPromise*) clusterDelSlot: (NSInteger)slot;
+- (CocoaPromise*) clusterDelSlots: (NSArray*)slots;
+
+#pragma mark CLUSTER FAILOVER
+/** http://redis.io/commands/cluster-failover */
+- (CocoaPromise*) clusterFailoverForce;
+- (CocoaPromise*) clusterFailoverTakeover;
+
+#pragma mark CLUSTER FORGET
+/** http://redis.io/commands/cluster-forget */
+- (CocoaPromise*) clusterForget: (NSString*)nodeId;
+
+#pragma mark CLUSTER GETKEYSINSLOT
+/** http://redis.io/commands/cluster-getkeysinslot */
+- (CocoaPromise*) clusterGetKeysInSlot: (NSInteger)slot count: (NSInteger)count;
+
+#pragma mark CLUSTER INFO
+/** http://redis.io/commands/cluster-info */
+- (CocoaPromise*) clusterInfo;
+
+#pragma mark CLUSTER KEYSLOT
+/** http://redis.io/commands/cluster-keyslot */
+- (CocoaPromise*) clusterKeyslot: (id)key;
+
+#pragma mark CLUSTER MEET
+/** http://redis.io/commands/cluster-meet */
+- (CocoaPromise*) clusterMeetIP: (NSString*)ip port: (NSInteger)port;
+
+#pragma mark CLUSTER NODES
+/** http://redis.io/commands/cluster-nodes */
+- (CocoaPromise*) clusterNodes;
+
+#pragma mark CLUSTER REPLICATE
+/** http://redis.io/commands/cluster-replicate */
+- (CocoaPromise*) clusterReplicate: (NSString*)nodeId;
+
+#pragma mark CLUSTER RESET
+/** http://redis.io/commands/cluster-reset */
+- (CocoaPromise*) clusterResetHard;
+- (CocoaPromise*) clusterResetSoft;
+
+#pragma mark CLUSTER SAVECONFIG
+/** http://redis.io/commands/cluster-saveconfig */
+- (CocoaPromise*) clusterSaveConfig;
+
+#pragma mark CLUSTER SET-CONFIG-EPOCH
+/** http://redis.io/commands/cluster-set-config-epoch */
+- (CocoaPromise*) clusterSetConfigEpoch: (NSInteger)epoch;
+
+#pragma mark CLUSTER SETSLOT
+/** http://redis.io/commands/cluster-setslot */
+- (CocoaPromise*) clusterSetSlotImporting: (NSInteger)slot;
+- (CocoaPromise*) clusterSetSlotMigrating: (NSInteger)slot;
+- (CocoaPromise*) clusterSetSlotStable: (NSInteger)slot;
+- (CocoaPromise*) clusterSetSlot: (NSInteger)slot node: (NSString*)nodeId;
+
+#pragma mark CLUSTER SLAVES
+/** http://redis.io/commands/cluster-slaves */
+- (CocoaPromise*) clusterSlaves: (NSString*)nodeId;
+
+#pragma mark CLUSTER SLOTS
+/** http://redis.io/commands/cluster-slots */
+- (CocoaPromise*) clusterSlots;
 
 
 @end
