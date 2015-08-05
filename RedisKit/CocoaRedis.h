@@ -836,7 +836,7 @@ extern NSString * const CocoaRedisMessageNotification;
 #pragma mark UNSUBSCRIBE
 /** http://redis.io/commands/unsubscribe */
 - (CocoaPromise*) unsubscribe;
-- (CocoaPromise*) unsubscribeChannels: (NSArray*)channels;
+- (CocoaPromise*) unsubscribe: (NSArray*)channels;
 
 #pragma mark - CLUSTER
 

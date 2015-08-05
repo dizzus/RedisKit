@@ -20,16 +20,23 @@
     
     [[[
     [[self.redis exists:key] then:^id(id value) {
-        XCTAssertEqualObjects(value, @0);
+        //XCTAssertEqualObjects(value, @0);
+        XCTAssertEqual([value integerValue], 0);
+
         return [self.redis append:key value:@"Hello"];
     }] then:^id(id value) {
-        XCTAssertEqualObjects(value, @5);
+        //XCTAssertEqualObjects(value, @5);
+        XCTAssertEqual([value integerValue], 5);
+
         return [self.redis append:key value:@" World"];
     }] then:^id(id value) {
-        XCTAssertEqualObjects(value, @11);
+        //XCTAssertEqualObjects(value, @11);
+        XCTAssertEqual([value integerValue], 11);
+
         return [self.redis get:key];
     }] then:^id(id value) {
         XCTAssertEqualObjects(value, @"Hello World");
+        NSLog(@"+++ APPEND TEST PASSED +++");
         return [self passed];
     }];
 

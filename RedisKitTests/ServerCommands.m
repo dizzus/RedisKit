@@ -35,6 +35,7 @@ static void PingLoop(CocoaRedis* redis, NSInteger counter, NSInteger max, CocoaP
     [self test: @"BGREWRITEAOF"];
 
     [[self.redis bgrewriteaof] then:^id(id value) {
+        NSLog(@"bgrewrite: %@", value);
         XCTAssertTrue( [value isEqualToString:@"Background append only file rewriting started"] || [value isEqualToString:@"OK"] );
         return [self passed];
     }];
@@ -455,7 +456,7 @@ static void PingLoop(CocoaRedis* redis, NSInteger counter, NSInteger max, CocoaP
                                  queue: nil
                             usingBlock: ^(NSNotification *notification)
             {
-                NSString* command = notification.userInfo[@"command"][0];
+                NSString* command = notification.userInfo[@"command"];
                 if( [command isEqualToString:@"PING"] ) ++pingCount;
             }];
             

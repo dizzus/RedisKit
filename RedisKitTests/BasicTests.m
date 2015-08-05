@@ -6,14 +6,16 @@
 //  Copyright (c) 2015 Dmitry Bakhvalov. All rights reserved.
 //
 
+//#include <ctype.h>
+
 #import <Cocoa/Cocoa.h>
 #import <XCTest/XCTest.h>
 
 #import "CocoaRedis.h"
 
 @interface BasicTests : XCTestCase
-
 @end
+
 
 @implementation BasicTests
 

@@ -55,7 +55,9 @@ NSUInteger intVersion(NSString* strVer) {
 }
 
 - (void) wait {
-    [self waitForExpectationsWithTimeout:1.5 handler:nil];
+    [self waitForExpectationsWithTimeout:3 handler:^(NSError *error) {
+        self.test = nil;
+    }];
 }
 
 - (void)setUp {
@@ -64,30 +66,54 @@ NSUInteger intVersion(NSString* strVer) {
     XCTestExpectation* exp = [self expectationWithDescription: @"Connecting"];
     self.redis = [CocoaRedis new];
     
-    [
-     [[self.redis connectWithHost: @"localhost"] then:^id(id value) {
-        return [self.redis command: @[@"SELECT", @15]];
+//    [
+//     [[self.redis connectWithHost: @"localhost"] then:^id(id value) {
+//        return [self.redis select:15];
+//    }] then:^id(id value) {
+//        <#code#>
+//    }]
+//    }] then:^id(id value) {
+//        [exp fulfill];
+//        return nil;
+//    }];
+//    
+//    [self waitForExpectationsWithTimeout:1 handler:^(NSError *error) {
+//        if(error) self.redis = nil;
+//    }];
+    
+    [[[[[self.redis connectWithHost: @"localhost"] then:^id(id value) {
+        return [self.redis select:15];
+    }] then:^id(id value) {
+        return [self.redis flushdb];
     }] then:^id(id value) {
         [exp fulfill];
         return nil;
+    }] catch:^id(NSError *err) {
+        XCTAssert(NO, @"setUp error: %@", err);
+        return nil;
     }];
     
-    [self waitForExpectationsWithTimeout:1 handler:^(NSError *error) {
+    [self waitForExpectationsWithTimeout:2 handler:^(NSError *error) {
         if(error) self.redis = nil;
     }];
     
-    XCTAssertNotNil(self.redis, @"Cannot connect");
+    XCTAssertNotNil(self.redis, @"Cannection error");
 }
 
 - (void)tearDown {
     XCTestExpectation* exp = [self expectationWithDescription: @"Disconnecting"];
+
+//    [[[[self.redis quit] then:^id(id value) {
+//        return [self.redis close];
+//    }] then:^id(id value) {
+//        [exp fulfill];
+//        return nil;
+//    }] catch:^id(NSError *err) {
+//        [exp fulfill];
+//        return nil;
+//    }];
     
-    [[[
-       [[self.redis command: @[@"SELECT", @15]] then:^id(id value) {
-        return [self.redis command: @[@"FLUSHDB"]];
-    }] then:^id(id value) {
-        return [self.redis close];
-    }] then:^id(id value) {
+    [[[self.redis quit] then:^id(id value) {
         [exp fulfill];
         return nil;
     }] catch:^id(NSError *err) {
@@ -95,17 +121,32 @@ NSUInteger intVersion(NSString* strVer) {
         return nil;
     }];
     
-    [self waitForExpectationsWithTimeout:2 handler:^(NSError *error) {
+//
+//    [[[[[self.redis select: 15] then:^id(id value) {
+//        return [self.redis flushdb];
+//    }] then:^id(id value) {
+//        return [self.redis quit];
+//    }] then:^id(id value) {
+//        [exp fulfill];
+//        return nil;
+//    }] catch:^id(NSError *err) {
+//        [exp fulfill];
+//        return nil;
+//    }];
+//    
+
+    [self waitForExpectationsWithTimeout:1 handler:^(NSError *error) {
         self.redis = nil;
     }];
-    
+
     [super tearDown];
 }
 
 - (NSString*)randomKey {
     NSString *uuid = [[NSUUID UUID] UUIDString];
-    NSString* key = [NSString stringWithFormat: @"__TestKey_%@", uuid];
-    return key;
+//    NSString* key = [NSString stringWithFormat: @"__TestKey_%@", uuid];
+//    return key;
+    return [@"__TestKey_" stringByAppendingString: uuid];
 }
 
 - (BOOL) isArray:(id)value {

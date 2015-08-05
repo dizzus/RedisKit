@@ -111,31 +111,138 @@ static void commandCallback(redisAsyncContext *context, void *reply, void *privd
     }
 }
 
+inline static char* skipUpToChar(char* str, char ch) {
+    while( *str && *str != ch ) ++str;
+    NSCAssert(*str, @"Invalid input string");
+    return str;
+}
+
+inline static char* scanNSUInteger(char* p, NSUInteger* result) {
+    NSUInteger value = 0;
+    
+    while( isdigit(*p) ) {
+        value = value * 10 + (*p++ - '0');
+    }
+    
+    if(result) *result = value;
+    
+    return p;
+}
+
+inline static char* scanCString(char* p, NSString* __autoreleasing *result) {
+    NSCAssert(*p++ == '"', @"Invalid string");
+    
+    NSMutableData* buffer = [NSMutableData new];
+    const char* hexDigits = "0123456789abcdef";
+    
+    while( *p != '"' ) {
+        if( *p++ != '\\' ) {
+            [buffer appendBytes:(p - 1) length:1];
+            continue;
+        }
+        
+        switch( *p++ ) {
+            case '"': case '\\':
+                [buffer appendBytes:(p - 1) length:1];
+            break;
+                
+            case 'x': case 'X': {
+                unsigned char code = 0;
+                
+                while( isxdigit(*p) ) {
+                    char* digit = strchr(hexDigits, tolower(*p++));
+                    NSCAssert(digit != NULL, @"Invalid hex number");
+                    code = code * 16 + (unsigned char)(digit - hexDigits);
+                }
+                
+                [buffer appendBytes: &code length:1];
+            }
+            break;
+                
+            default: break;
+        }
+    }
+    
+    NSCAssert(*p == '"', @"Unterminated string");
+    
+    if( result ) *result = [[NSString alloc] initWithData:buffer encoding:NSUTF8StringEncoding];
+    
+    return p;
+}
+
+static char* scanTimestamp(char* p, NSDate* __autoreleasing *result) {
+    NSUInteger seconds = 0;
+    char* q = scanNSUInteger(p, &seconds);
+    NSCAssert(*q == '.', @"Invalid timestamp");
+    
+    NSUInteger millis = 0;
+    q = scanNSUInteger(q + 1, &millis);
+    
+    if(result) {
+        double timestamp = (double)seconds + (double) millis / 1000000.0;
+        *result = [NSDate dateWithTimeIntervalSince1970: timestamp];
+    }
+    
+    return q;
+}
+
+/* 
+      Timestamp       Db      Address      Command  Arg0     Arg1...
+   |+++++++++++++++|  |+| |+++++++++++++|  |++++++| |+++++| |++++++|
+   1438808382.449497 [123 127.0.0.1:54710] "append" "Hello" " Wolrd" 
+
+ */
+static NSDictionary* parseMonitorString(NSString* string) {
+    const char* cstr = [string cStringUsingEncoding: NSUTF8StringEncoding];
+    NSData* data = [NSData dataWithBytes:cstr length: strlen(cstr) + 1];
+
+    // timestamp
+    char* p = (char*) data.bytes;
+    NSDate* timestamp = nil;
+    char* q = scanTimestamp(p, &timestamp);
+ 
+    // db
+    p = q + 1;
+    NSCAssert(*p == '[', @"Invalid input");
+    NSUInteger db = 0;
+    q = scanNSUInteger(p + 1, &db);
+    
+    // address
+    p = q + 1;
+    q = skipUpToChar(p, ']');
+    NSString* addr = [[NSString alloc] initWithBytes:p length:(q - p) encoding:NSUTF8StringEncoding];
+    
+    // command
+    NSCAssert(*(q + 2) == '"', @"Invalid input");
+    p = q + 3;
+    q = skipUpToChar(p, '"');
+    NSString* command = [[NSString alloc] initWithBytes:p length:(q - p) encoding:NSUTF8StringEncoding];
+    
+    NSMutableArray* args = [NSMutableArray new];
+    
+    // arguments
+    p = q + 2;
+    while( *p ) {
+        NSString* arg = nil;
+        p = scanCString(p, &arg) + 1;
+        
+        [args addObject: arg];
+    }
+
+    return @{
+        @"time": timestamp,
+        @"db": [NSNumber numberWithUnsignedInteger: db],
+        @"address": addr,
+        @"command": command,
+        @"arguments": args
+    };
+}
+
 static void monitorCallback(redisAsyncContext *context, void *reply, void *privdata) {
     id result = nil;
     
     if( reply != nil && (result = parseReply(reply, NO)) != nil && ![result isEqualToString: @"OK"] ) {
-        NSArray* parts = [result componentsSeparatedByString:@" "];
-
-        double time = [parts[0] doubleValue];
-        NSInteger db = [[parts[1] substringFromIndex:1] integerValue];
-        NSRange range = NSMakeRange(0, [parts[2] length] - 1);
-        NSString* addr = [parts[2] substringWithRange:range];
-
-        NSMutableArray* command = [NSMutableArray new];
-        for( NSUInteger i = 3; i < parts.count; ++i ) {
-            NSRange range = NSMakeRange(1, [parts[i] length] - 2);
-            NSString* substr = [parts[i] substringWithRange:range];
-            [command addObject: substr];
-        }
-        
-        NSDictionary* info = @{
-            @"timestamp": [NSNumber numberWithDouble:time],
-            @"db": [NSNumber numberWithInteger:db],
-            @"address": addr,
-            @"command": command
-        };
-        
+        NSDictionary* info = parseMonitorString( result );
         [[NSNotificationCenter defaultCenter] postNotificationName:CocoaRedisMonitorNotification object:nil userInfo:info];
     }
 }
@@ -217,7 +324,6 @@ static id (^toLongLong)(id) = ^id(id value) {
 
 static id (^toNSSet)(id) = ^id(id value) {
     if( value == [NSNull null] ) return value;
-    if( [value count] == 0 ) return [NSSet new];
     return [NSSet setWithArray: value];
 };
 
@@ -321,7 +427,7 @@ static NSDictionary* ParseSlaveRole(NSArray* data) {
     return result;
 }
 
-static void CollectKeys(CocoaRedis* redis, CocoaPromise* cursorPromise, NSString* pattern, CocoaPromise* result, NSMutableArray* keys) {
+static void _CollectKeys(NSString* scanCmd, CocoaRedis* redis, id key, CocoaPromise* cursorPromise, NSString* pattern, CocoaPromise* result, NSMutableArray* keys) {
     [cursorPromise onFulfill:^id(id value) {
         NSInteger cursor = [value[0] integerValue];
         [keys addObjectsFromArray: value[1]];
@@ -329,8 +435,10 @@ static void CollectKeys(CocoaRedis* redis, CocoaPromise* cursorPromise, NSString
         if( cursor == 0 ) {
             [result fulfill: keys];
         } else {
-            CocoaPromise* nextCursor = [redis command: @[@"SCAN", [NSNumber numberWithInteger:cursor], @"MATCH", pattern]];
-            CollectKeys(redis, nextCursor, pattern, result, keys);
+            NSMutableArray* args = [NSMutableArray arrayWithObjects: scanCmd, key, nil];
+            [args addObjectsFromArray: @[[NSNumber numberWithInteger:cursor], @"MATCH", pattern]];
+            CocoaPromise* nextCursor = [redis command: args];
+            _CollectKeys(scanCmd, redis, key, nextCursor, pattern, result, keys);
         }
         return nil;
     } onReject:^id(NSError *err) {
@@ -339,16 +447,31 @@ static void CollectKeys(CocoaRedis* redis, CocoaPromise* cursorPromise, NSString
     }];
 }
 
+static void CollectKeys(CocoaRedis* redis, CocoaPromise* cursorPromise, NSString* pattern, CocoaPromise* result, NSMutableArray* keys) {
+    _CollectKeys(@"SCAN", redis, nil, cursorPromise, pattern, result, keys);
+}
+
 static void CollectSetKeys(CocoaRedis* redis, id key, CocoaPromise* cursorPromise, NSString* pattern, CocoaPromise* result, NSMutableArray* keys) {
+    _CollectKeys(@"SSCAN", redis, key, cursorPromise, pattern, result, keys);
+}
+
+static void _CollectKeysToDict(NSString* scanCmd, CocoaRedis* redis, id key, CocoaPromise* cursorPromise, NSString* pattern, CocoaPromise* result, NSMutableDictionary* dict, id(^mutator)(id)) {
     [cursorPromise onFulfill:^id(id value) {
         NSInteger cursor = [value[0] integerValue];
-        [keys addObjectsFromArray: value[1]];
+        
+        NSArray* data = value[1];
+        const NSUInteger count = [data count];
+        
+        for(int i = 0; i < count; i += 2 ) {
+            id obj = mutator ? mutator(data[i+1]) : data[i+1];
+            [dict setObject: obj forKey: data[i]];
+        }
         
         if( cursor == 0 ) {
-            [result fulfill: keys];
+            [result fulfill: dict];
         } else {
-            CocoaPromise* nextCursor = [redis command: @[@"SSCAN", key, [NSNumber numberWithInteger:cursor], @"MATCH", pattern]];
-            CollectSetKeys(redis, key, nextCursor, pattern, result, keys);
+            CocoaPromise* nextCursor = [redis command: @[scanCmd, key, [NSNumber numberWithInteger:cursor], @"MATCH", pattern]];
+            _CollectKeysToDict(scanCmd, redis, key, nextCursor, pattern, result, dict, mutator);
         }
         return nil;
     } onReject:^id(NSError *err) {
@@ -358,51 +481,11 @@ static void CollectSetKeys(CocoaRedis* redis, id key, CocoaPromise* cursorPromis
 }
 
 static void CollectHashKeys(CocoaRedis* redis, id key, CocoaPromise* cursorPromise, NSString* pattern, CocoaPromise* result, NSMutableDictionary* dict) {
-    [cursorPromise onFulfill:^id(id value) {
-        NSInteger cursor = [value[0] integerValue];
-        
-        NSArray* data = value[1];
-        const NSUInteger count = [data count];
-        
-        for(int i = 0; i < count; i += 2 ) {
-            [dict setObject: data[i+1] forKey: data[i]];
-        }
-        
-        if( cursor == 0 ) {
-            [result fulfill: dict];
-        } else {
-            CocoaPromise* nextCursor = [redis command: @[@"HSCAN", key, [NSNumber numberWithInteger:cursor], @"MATCH", pattern]];
-            CollectHashKeys(redis, key, nextCursor, pattern, result, dict);
-        }
-        return nil;
-    } onReject:^id(NSError *err) {
-        [result reject: err];
-        return nil;
-    }];
+    _CollectKeysToDict(@"HSCAN", redis, key, cursorPromise, pattern, result, dict, nil);
 }
 
 static void CollectZSetKeys(CocoaRedis* redis, id key, CocoaPromise* cursorPromise, NSString* pattern, CocoaPromise* result, NSMutableDictionary* dict) {
-    [cursorPromise onFulfill:^id(id value) {
-        NSInteger cursor = [value[0] integerValue];
-        
-        NSArray* data = value[1];
-        const NSUInteger count = [data count];
-        
-        for(int i = 0; i < count; i += 2 ) {
-            [dict setObject: toDouble(data[i+1]) forKey: data[i]];
-        }
-        
-        if( cursor == 0 ) {
-            [result fulfill: dict];
-        } else {
-            CocoaPromise* nextCursor = [redis command: @[@"ZSCAN", key, [NSNumber numberWithInteger:cursor], @"MATCH", pattern]];
-            CollectZSetKeys(redis, key, nextCursor, pattern, result, dict);
-        }
-        return nil;
-    } onReject:^id(NSError *err) {
-        [result reject: err];
-        return nil;
-    }];
+    _CollectKeysToDict(@"ZSCAN", redis, key, cursorPromise, pattern, result, dict, toDouble);
 }
 
 
