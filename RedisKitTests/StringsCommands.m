@@ -36,7 +36,6 @@
         return [self.redis get:key];
     }] then:^id(id value) {
         XCTAssertEqualObjects(value, @"Hello World");
-        NSLog(@"+++ APPEND TEST PASSED +++");
         return [self passed];
     }];
 

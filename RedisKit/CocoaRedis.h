@@ -919,5 +919,4 @@ extern NSString * const CocoaRedisMessageNotification;
 /** http://redis.io/commands/cluster-slots */
 - (CocoaPromise*) clusterSlots;
 
-
 @end

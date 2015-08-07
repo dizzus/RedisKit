@@ -35,8 +35,8 @@ static void PingLoop(CocoaRedis* redis, NSInteger counter, NSInteger max, CocoaP
     [self test: @"BGREWRITEAOF"];
 
     [[self.redis bgrewriteaof] then:^id(id value) {
-        NSLog(@"bgrewrite: %@", value);
-        XCTAssertTrue( [value isEqualToString:@"Background append only file rewriting started"] || [value isEqualToString:@"OK"] );
+        NSArray* expected = @[@"Background append only file rewriting scheduled", @"Background append only file rewriting started", @"OK"];
+        XCTAssertTrue([expected containsObject:value]);
         return [self passed];
     }];
     
@@ -439,7 +439,7 @@ static void PingLoop(CocoaRedis* redis, NSInteger counter, NSInteger max, CocoaP
             NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
             [center removeObserver: observer];
             
-            XCTAssertTrue( pingCount == expectedPing );
+            XCTAssertEqual(pingCount, expectedPing);
             [self passed];
         });
         

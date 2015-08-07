@@ -129,13 +129,13 @@ inline static char* scanNSUInteger(char* p, NSUInteger* result) {
     return p;
 }
 
-inline static char* scanCString(char* p, NSString* __autoreleasing *result) {
+inline static char* scanCString(char* p, id __autoreleasing *result) {
     NSCAssert(*p++ == '"', @"Invalid string");
     
     NSMutableData* buffer = [NSMutableData new];
     const char* hexDigits = "0123456789abcdef";
     
-    while( *p != '"' ) {
+    while( *p && *p != '"' ) {
         if( *p++ != '\\' ) {
             [buffer appendBytes:(p - 1) length:1];
             continue;
@@ -165,7 +165,10 @@ inline static char* scanCString(char* p, NSString* __autoreleasing *result) {
     
     NSCAssert(*p == '"', @"Unterminated string");
     
-    if( result ) *result = [[NSString alloc] initWithData:buffer encoding:NSUTF8StringEncoding];
+    if( result ) {
+        NSString* utf8 = [[NSString alloc] initWithData:buffer encoding:NSUTF8StringEncoding];
+        *result = utf8 ? utf8 : [NSData dataWithData: buffer];
+    }
     
     return p;
 }
@@ -220,13 +223,14 @@ static NSDictionary* parseMonitorString(NSString* string) {
     
     NSMutableArray* args = [NSMutableArray new];
     
-    // arguments
-    p = q + 2;
-    while( *p ) {
-        NSString* arg = nil;
-        p = scanCString(p, &arg) + 1;
-        
-        [args addObject: arg];
+    // command with args?
+    if( *(q + 1) == ' ') {
+        do {
+            id arg = nil;
+            q = scanCString(q + 2, &arg);
+            
+            [args addObject: arg];
+        } while( *(q + 1) == ' ');
     }
 
     return @{
@@ -242,8 +246,13 @@ static void monitorCallback(redisAsyncContext *context, void *reply, void *privd
     id result = nil;
     
     if( reply != nil && (result = parseReply(reply, NO)) != nil && ![result isEqualToString: @"OK"] ) {
-        NSDictionary* info = parseMonitorString( result );
-        [[NSNotificationCenter defaultCenter] postNotificationName:CocoaRedisMonitorNotification object:nil userInfo:info];
+        @try {
+            NSDictionary* info = parseMonitorString( result );
+            [[NSNotificationCenter defaultCenter] postNotificationName:CocoaRedisMonitorNotification object:nil userInfo:info];
+        } @catch(NSException* ex) {
+            NSLog(@"Monitor exception: %@", ex);
+            NSLog(@"Input string: <<%@>>", result);
+        }
     }
 }
 
