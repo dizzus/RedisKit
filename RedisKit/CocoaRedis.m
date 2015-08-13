@@ -1934,7 +1934,7 @@ static void CollectZSetKeys(CocoaRedis* redis, id key, CocoaPromise* cursorPromi
     return [self psubscribePatterns: @[pattern]];
 }
 
-- (CocoaPromise*) psubscribePatterns: (NSArray*)patterns {
+- (CocoaPromise*) _subscribeCommand: (NSString*)cmd arguments: (NSArray*)args {
     CocoaPromise* result = [CocoaPromise new];
     
     if( !self.isConnected ) {
@@ -1943,19 +1943,19 @@ static void CollectZSetKeys(CocoaRedis* redis, id key, CocoaPromise* cursorPromi
         return result;
     }
     
-    NSMutableArray* args = [NSMutableArray arrayWithObject: @"PSUBSCRIBE"];
-    [args addObjectsFromArray: patterns];
+    NSMutableArray* command = [NSMutableArray arrayWithObject: cmd];
+    [command addObjectsFromArray: args];
     
-    const NSUInteger count = args.count;
+    const NSUInteger count = command.count;
     const char* argv[count];
     size_t argvlen[count];
-
+    
     for( NSUInteger i = 0; i < count; ++i ) {
-        NSAssert([args[i] isKindOfClass:[NSString class]], @"Invalid PSUBSCRIBE parameter");
-        argv   [i] = [args[i] UTF8String];
+        NSAssert([command[i] isKindOfClass:[NSString class]], @"Invalid pub/sub parameter");
+        argv   [i] = [command[i] UTF8String];
         argvlen[i] = strlen(argv[i]);
     }
-
+    
     self.ctx->data = (void*) CFBridgingRetain(result);
     
     int rc = redisAsyncCommandArgv(self.ctx,
@@ -1973,6 +1973,10 @@ static void CollectZSetKeys(CocoaRedis* redis, id key, CocoaPromise* cursorPromi
     return result;
 }
 
+- (CocoaPromise*) psubscribePatterns: (NSArray*)patterns {
+    return [self _subscribeCommand: @"PSUBSCRIBE" arguments: patterns];
+}
+
 #pragma mark PUBSUB
 - (CocoaPromise*) pubsubActiveChannels {
     return [self command:@[@"PUBSUB", @"CHANNELS"]];
@@ -1983,10 +1987,7 @@ static void CollectZSetKeys(CocoaRedis* redis, id key, CocoaPromise* cursorPromi
 }
 
 - (CocoaPromise*) pubsubSubscribers: (NSArray*)channels {
-    NSMutableArray* args = [NSMutableArray arrayWithObjects:@"PUBSUB", @"NUMSUB", nil];
-    [args addObjectsFromArray: channels];
-    
-    return PromiseNSDict([self command:args], toLongLong);
+    return PromiseNSDict( [self command: @[@"PUBSUB", @"NUMSUB"] arguments: channels], toLongLong );
 }
 
 - (CocoaPromise*) pubsubPatternsCount {
@@ -2004,42 +2005,7 @@ static void CollectZSetKeys(CocoaRedis* redis, id key, CocoaPromise* cursorPromi
 }
 
 - (CocoaPromise *)punsubscribe:(NSArray *)patterns {
-    CocoaPromise* result = [CocoaPromise new];
-    
-    if( !self.isConnected ) {
-        NSError* err = [NSError errorWithDomain: @"Not connected" code:0 userInfo:nil];
-        [result reject: err];
-        return result;
-    }
-    
-    NSMutableArray* args = [NSMutableArray arrayWithObject: @"PUNSUBSCRIBE"];
-    [args addObjectsFromArray: patterns];
-    
-    const NSUInteger count = args.count;
-    const char* argv[count];
-    size_t argvlen[count];
-    
-    for( NSUInteger i = 0; i < count; ++i ) {
-        NSAssert([args[i] isKindOfClass:[NSString class]], @"Invalid PUNSUBSCRIBE parameter");
-        argv   [i] = [args[i] UTF8String];
-        argvlen[i] = strlen(argv[i]);
-    }
-    
-    self.ctx->data = (void*) CFBridgingRetain(result);
-    
-    int rc = redisAsyncCommandArgv(self.ctx,
-                                   subscribeCallback,
-                                   NULL,
-                                   (int) count, argv, argvlen);
-    
-    if( rc != REDIS_OK ) {
-        NSError* err = [NSError errorWithDomain: [NSString stringWithUTF8String: self.ctx->errstr]
-                                           code: self.ctx->err
-                                       userInfo: nil];
-        [result reject: err];
-    }
-    
-    return result;
+    return [self _subscribeCommand: @"PUNSUBSCRIBE" arguments: patterns];
 }
 
 #pragma mark - SUBSCRIBE
@@ -2048,42 +2014,7 @@ static void CollectZSetKeys(CocoaRedis* redis, id key, CocoaPromise* cursorPromi
 }
 
 - (CocoaPromise*) subscribeChannels: (NSArray*)channels {
-    CocoaPromise* result = [CocoaPromise new];
-    
-    if( !self.isConnected ) {
-        NSError* err = [NSError errorWithDomain: @"Not connected" code:0 userInfo:nil];
-        [result reject: err];
-        return result;
-    }
-    
-    NSMutableArray* args = [NSMutableArray arrayWithObject: @"SUBSCRIBE"];
-    [args addObjectsFromArray: channels];
-    
-    const NSUInteger count = args.count;
-    const char* argv[count];
-    size_t argvlen[count];
-    
-    for( NSUInteger i = 0; i < count; ++i ) {
-        NSAssert([args[i] isKindOfClass:[NSString class]], @"Invalid SUBSCRIBE parameter");
-        argv   [i] = [args[i] UTF8String];
-        argvlen[i] = strlen(argv[i]);
-    }
-    
-    self.ctx->data = (void*) CFBridgingRetain(result);
-    
-    int rc = redisAsyncCommandArgv(self.ctx,
-                                   subscribeCallback,
-                                   NULL,
-                                   (int) count, argv, argvlen);
-    
-    if( rc != REDIS_OK ) {
-        NSError* err = [NSError errorWithDomain: [NSString stringWithUTF8String: self.ctx->errstr]
-                                           code: self.ctx->err
-                                       userInfo: nil];
-        [result reject: err];
-    }
-    
-    return result;
+    return [self _subscribeCommand: @"SUBSCRIBE" arguments: channels];
 }
 
 #pragma mark UNSUBSCRIBE
@@ -2092,44 +2023,8 @@ static void CollectZSetKeys(CocoaRedis* redis, id key, CocoaPromise* cursorPromi
 }
 
 - (CocoaPromise *)unsubscribe:(NSArray *)channels {
-    CocoaPromise* result = [CocoaPromise new];
-    
-    if( !self.isConnected ) {
-        NSError* err = [NSError errorWithDomain: @"Not connected" code:0 userInfo:nil];
-        [result reject: err];
-        return result;
-    }
-    
-    NSMutableArray* args = [NSMutableArray arrayWithObject: @"UNSUBSCRIBE"];
-    [args addObjectsFromArray: channels];
-    
-    const NSUInteger count = args.count;
-    const char* argv[count];
-    size_t argvlen[count];
-    
-    for( NSUInteger i = 0; i < count; ++i ) {
-        NSAssert([args[i] isKindOfClass:[NSString class]], @"Invalid UNSUBSCRIBE parameter");
-        argv   [i] = [args[i] UTF8String];
-        argvlen[i] = strlen(argv[i]);
-    }
-    
-    self.ctx->data = (void*) CFBridgingRetain(result);
-    
-    int rc = redisAsyncCommandArgv(self.ctx,
-                                   subscribeCallback,
-                                   NULL,
-                                   (int) count, argv, argvlen);
-    
-    if( rc != REDIS_OK ) {
-        NSError* err = [NSError errorWithDomain: [NSString stringWithUTF8String: self.ctx->errstr]
-                                           code: self.ctx->err
-                                       userInfo: nil];
-        [result reject: err];
-    }
-    
-    return result;
+    return [self _subscribeCommand: @"UNSUBSCRIBE" arguments: channels];
 }
-
 
 #pragma mark - CLUSTER
 
