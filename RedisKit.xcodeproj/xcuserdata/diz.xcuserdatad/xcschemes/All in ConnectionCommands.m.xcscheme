@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Scheme
+   version = "1.3">
+   <BuildAction>
+      <BuildActionEntries>
+         <BuildActionEntry
+            buildForRunning = "YES"
+            buildForTesting = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "665C84071B5D57DF00F6C4C1"
+               BuildableName = "RedisKitTests.xctest"
+               BlueprintName = "RedisKitTests"
+               ReferencedContainer = "container:RedisKit.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+      </BuildActionEntries>
+   </BuildAction>
+   <TestAction
+      buildConfiguration = "Debug">
+      <Testables>
+         <TestableReference>
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "665C84071B5D57DF00F6C4C1"
+               BuildableName = "RedisKitTests.xctest"
+               BlueprintName = "RedisKitTests"
+               ReferencedContainer = "container:RedisKit.xcodeproj">
+            </BuildableReference>
+            <SkippedTests>
+               <Test
+                  Identifier = "BasicTests">
+               </Test>
+               <Test
+                  Identifier = "ClusterCommands">
+               </Test>
+               <Test
+                  Identifier = "GeoCommands">
+               </Test>
+               <Test
+                  Identifier = "HashesCommands">
+               </Test>
+               <Test
+                  Identifier = "HyperLogLogCommands">
+               </Test>
+               <Test
+                  Identifier = "KeysCommands">
+               </Test>
+               <Test
+                  Identifier = "ListsCommands">
+               </Test>
+               <Test
+                  Identifier = "PubSubCommands">
+               </Test>
+               <Test
+                  Identifier = "RedisTestCase">
+               </Test>
+               <Test
+                  Identifier = "ScriptingCommands">
+               </Test>
+               <Test
+                  Identifier = "ServerCommands">
+               </Test>
+               <Test
+                  Identifier = "SetsCommands">
+               </Test>
+               <Test
+                  Identifier = "SortedSetsCommands">
+               </Test>
+               <Test
+                  Identifier = "StringsCommands">
+               </Test>
+               <Test
+                  Identifier = "TranscationsCommands">
+               </Test>
+            </SkippedTests>
+         </TestableReference>
+      </Testables>
+   </TestAction>
+   <LaunchAction
+      useCustomWorkingDirectory = "NO">
+   </LaunchAction>
+</Scheme>

@@ -111,13 +111,13 @@ static void commandCallback(redisAsyncContext *context, void *reply, void *privd
     }
 }
 
-inline static char* skipUpToChar(char* str, char ch) {
+inline static const char* skipUpToChar(const char* str, char ch) {
     while( *str && *str != ch ) ++str;
     NSCAssert(*str, @"Invalid input string");
     return str;
 }
 
-inline static char* scanNSUInteger(char* p, NSUInteger* result) {
+inline static const char* scanNSUInteger(const char* p, NSUInteger* result) {
     NSUInteger value = 0;
     
     while( isdigit(*p) ) {
@@ -129,7 +129,7 @@ inline static char* scanNSUInteger(char* p, NSUInteger* result) {
     return p;
 }
 
-inline static char* scanCString(char* p, id __autoreleasing *result) {
+inline static const char* scanCString(const char* p, id __autoreleasing *result) {
     NSCAssert(*p++ == '"', @"Invalid string");
     
     NSMutableData* buffer = [NSMutableData new];
@@ -150,7 +150,7 @@ inline static char* scanCString(char* p, id __autoreleasing *result) {
                 unsigned char code = 0;
                 
                 while( isxdigit(*p) ) {
-                    char* digit = strchr(hexDigits, tolower(*p++));
+                    const char* digit = strchr(hexDigits, tolower(*p++));
                     NSCAssert(digit != NULL, @"Invalid hex number");
                     code = code * 16 + (unsigned char)(digit - hexDigits);
                 }
@@ -173,9 +173,9 @@ inline static char* scanCString(char* p, id __autoreleasing *result) {
     return p;
 }
 
-static char* scanTimestamp(char* p, NSDate* __autoreleasing *result) {
+static const char* scanTimestamp(const char* p, NSDate* __autoreleasing *result) {
     NSUInteger seconds = 0;
-    char* q = scanNSUInteger(p, &seconds);
+    const char* q = scanNSUInteger(p, &seconds);
     NSCAssert(*q == '.', @"Invalid timestamp");
     
     NSUInteger millis = 0;
@@ -200,9 +200,9 @@ static NSDictionary* parseMonitorString(NSString* string) {
     NSData* data = [NSData dataWithBytes:cstr length: strlen(cstr) + 1];
 
     // timestamp
-    char* p = (char*) data.bytes;
+    const char* p = (char*) data.bytes;
     NSDate* timestamp = nil;
-    char* q = scanTimestamp(p, &timestamp);
+    const char* q = scanTimestamp(p, &timestamp);
  
     // db
     p = q + 1;
@@ -269,38 +269,43 @@ static void subscribeCallback(redisAsyncContext *context, void *reply, void *pri
         NSLog(@"Called with NULL reply");
         return;
     }
-    
-    if( (result = parseReply(reply, NO)) != nil ) {
-        NSString* command = result[0];
-        
-        if( ([command isEqualToString:@"psubscribe"] || [command isEqualToString:@"punsubscribe"]) ) {
-            NSDictionary* info = @{@"pattern": result[1], @"count": result[2]};
-            [promise fulfill: info];
-        } else
-            
-        if( ([command isEqualToString: @"subscribe"] || [command isEqualToString:@"unsubscribe"]) ) {
-            NSDictionary* info = @{@"channel": result[1], @"count": result[2]};
-            [promise fulfill: info];
-        } else
 
-        if( [command isEqualToString:@"message"] ) {
-            //NSCAssert(context->data == NULL, @"Got message before subscribe event");
-            if( context->data != NULL ) {
-                NSLog(@"Got message before subscribe event");
-            }
-            
-            NSDictionary* info = @{@"channel": result[1], @"message": result[2]};
-            [[NSNotificationCenter defaultCenter] postNotificationName:CocoaRedisMessageNotification object:nil userInfo:info];
-        } else
-
-        if( [command isEqualToString:@"pmessage"] ) {
-            NSCAssert(context->data == NULL, @"Got pmessage before subscribe event");
-            
-            NSDictionary* info = @{@"pattern": result[1], @"channel": result[2], @"message": result[3]};
-            [[NSNotificationCenter defaultCenter] postNotificationName:CocoaRedisMessageNotification object:nil userInfo:info];
-        }
-    } else {
+    if( (result = parseReply(reply, NO)) == nil ) {
         [promise reject: [NSError errorWithDomain:@"Error getting subscribe reply" code:0 userInfo:nil]];
+        return;
+    }
+    
+    NSString* command = result[0];
+    
+    if( ([command isEqualToString:@"psubscribe"] || [command isEqualToString:@"punsubscribe"]) ) {
+        NSDictionary* info = @{@"pattern": result[1], @"count": result[2]};
+        [promise fulfill: info];
+    } else
+        
+    if( ([command isEqualToString: @"subscribe"] || [command isEqualToString:@"unsubscribe"]) ) {
+        NSDictionary* info = @{@"channel": result[1], @"count": result[2]};
+        [promise fulfill: info];
+    } else
+
+    if( [command isEqualToString:@"message"] ) {
+        //NSCAssert(context->data == NULL, @"Got message before subscribe event");
+        if( context->data != NULL ) {
+            NSLog(@"Got message before subscribe event");
+        }
+        
+        NSDictionary* info = @{@"channel": result[1], @"message": result[2]};
+        [[NSNotificationCenter defaultCenter] postNotificationName:CocoaRedisMessageNotification object:nil userInfo:info];
+    } else
+
+    if( [command isEqualToString:@"pmessage"] ) {
+        NSCAssert(context->data == NULL, @"Got pmessage before subscribe event");
+        
+        NSDictionary* info = @{@"pattern": result[1], @"channel": result[2], @"message": result[3]};
+        [[NSNotificationCenter defaultCenter] postNotificationName:CocoaRedisMessageNotification object:nil userInfo:info];
+    }
+    
+    else {
+        NSCAssert(NO, [@"Subscribe callback. Invalid command: " stringByAppendingString: command]);
     }
 }
 
@@ -624,6 +629,10 @@ static void CollectZSetKeys(CocoaRedis* redis, id key, CocoaPromise* cursorPromi
     return result;
 }
 
+- (CocoaPromise*) command:(NSArray *)command arguments:(NSArray *)arguments {
+    return [self command: [command arrayByAddingObjectsFromArray: arguments]];
+}
+
 - (NSArray*) parseClientList: (NSString*)reply {
     NSMutableArray* result = [NSMutableArray new];
     
@@ -670,9 +679,7 @@ static void CollectZSetKeys(CocoaRedis* redis, id key, CocoaPromise* cursorPromi
 }
 
 - (CocoaPromise*) bitopAnd: (id)dest keys: (NSArray*)keys {
-    NSMutableArray* args = [NSMutableArray arrayWithObjects: @"BITOP", @"AND", dest, nil];
-    [args addObjectsFromArray: keys];
-    return [self command: args];
+    return [self command:@[@"BITOP", @"AND", dest] arguments:keys];
 }
 
 - (CocoaPromise*) bitopOr: (id)dest key: (id)key {
@@ -680,9 +687,7 @@ static void CollectZSetKeys(CocoaRedis* redis, id key, CocoaPromise* cursorPromi
 }
 
 - (CocoaPromise*) bitopOr: (id)dest keys: (NSArray*)keys {
-    NSMutableArray* args = [NSMutableArray arrayWithObjects: @"BITOP", @"OR", dest, nil];
-    [args addObjectsFromArray: keys];
-    return [self command: args];
+    return [self command:@[@"BITOP", @"OR", dest] arguments:keys];
 }
 
 - (CocoaPromise*) bitopXor: (id)dest key: (id)key {
@@ -690,9 +695,7 @@ static void CollectZSetKeys(CocoaRedis* redis, id key, CocoaPromise* cursorPromi
 }
 
 - (CocoaPromise*) bitopXor: (id)dest keys: (NSArray*)keys {
-    NSMutableArray* args = [NSMutableArray arrayWithObjects: @"BITOP", @"XOR", dest, nil];
-    [args addObjectsFromArray: keys];
-    return [self command: args];
+    return [self command:@[@"BITOP", @"XOR", dest] arguments:keys];
 }
 
 - (CocoaPromise*) bitopNot: (id)dest key: (id)key {
@@ -700,9 +703,7 @@ static void CollectZSetKeys(CocoaRedis* redis, id key, CocoaPromise* cursorPromi
 }
 
 - (CocoaPromise*) bitopNot: (id)dest keys: (NSArray*)keys {
-    NSMutableArray* args = [NSMutableArray arrayWithObjects: @"BITOP", @"NOT", dest, nil];
-    [args addObjectsFromArray: keys];
-    return [self command: args];
+    return [self command:@[@"BITOP", @"NOT", dest] arguments:keys];
 }
 
 #pragma mark BITPOS
@@ -765,9 +766,7 @@ static void CollectZSetKeys(CocoaRedis* redis, id key, CocoaPromise* cursorPromi
 
 #pragma mark MGET
 - (CocoaPromise *)mget:(NSArray *)values {
-    NSMutableArray* args = [NSMutableArray arrayWithObject: @"MGET"];
-    [args addObjectsFromArray:values];
-    return [self command: args];
+    return [self command:@[@"MGET"] arguments:values];
 }
 
 #pragma mark MSET
@@ -776,9 +775,7 @@ static void CollectZSetKeys(CocoaRedis* redis, id key, CocoaPromise* cursorPromi
 }
 
 - (CocoaPromise *)mset:(NSArray *)values {
-    NSMutableArray* args = [NSMutableArray arrayWithObject: @"MSET"];
-    [args addObjectsFromArray: values];
-    return [self command: args];
+    return [self command:@[@"MSET"] arguments:values];
 }
 
 #pragma mark MSETNX
@@ -787,9 +784,7 @@ static void CollectZSetKeys(CocoaRedis* redis, id key, CocoaPromise* cursorPromi
 }
 
 - (CocoaPromise *)msetnx:(NSArray*)values {
-    NSMutableArray* args = [NSMutableArray arrayWithObject: @"MSETNX"];
-    [args addObjectsFromArray:values];
-    return [self command: args];
+    return [self command:@[@"MSETNX"] arguments:values];
 }
 
 #pragma mark PSETEX
@@ -879,9 +874,7 @@ static void CollectZSetKeys(CocoaRedis* redis, id key, CocoaPromise* cursorPromi
 }
 
 - (CocoaPromise *)delKeys:(NSArray *)keys {
-    NSMutableArray* args = [NSMutableArray arrayWithObject: @"DEL"];
-    [args addObjectsFromArray: keys];
-    return [self command: args];
+    return [self command:@[@"DEL"] arguments:keys];
 }
 
 #pragma mark DUMP
@@ -895,9 +888,7 @@ static void CollectZSetKeys(CocoaRedis* redis, id key, CocoaPromise* cursorPromi
 }
 
 - (CocoaPromise *)existsKeys:(NSArray *)keys {
-    NSMutableArray* args = [NSMutableArray arrayWithObject: @"EXISTS"];
-    [args addObjectsFromArray: keys];
-    return [self command: args];
+    return [self command:@[@"EXISTS"] arguments:keys];
 }
 
 #pragma mark EXPIRE
@@ -926,9 +917,7 @@ static void CollectZSetKeys(CocoaRedis* redis, id key, CocoaPromise* cursorPromi
 }
 
 - (CocoaPromise *)object:(NSString *)subcommand args:(NSArray *)args {
-    NSMutableArray* arguments = [NSMutableArray arrayWithObjects: @"OBJECT", subcommand, nil];
-    [arguments addObjectsFromArray: args];
-    return [self command: arguments];
+    return [self command:@[@"OBJECT", subcommand] arguments:args];
 }
 
 #pragma mark PERSIST
@@ -1059,9 +1048,7 @@ static void CollectZSetKeys(CocoaRedis* redis, id key, CocoaPromise* cursorPromi
 }
 
 - (CocoaPromise *)lpush:(id)key values:(NSArray *)values {
-    NSMutableArray* args = [NSMutableArray arrayWithObjects: @"LPUSH", key, nil];
-    [args addObjectsFromArray: values];
-    return [self command: args];
+    return [self command:@[@"LPUSH", key] arguments:values];
 }
 
 #pragma mark LPUSHX
@@ -1105,9 +1092,7 @@ static void CollectZSetKeys(CocoaRedis* redis, id key, CocoaPromise* cursorPromi
 }
 
 - (CocoaPromise *)rpush:(id)key values:(NSArray *)values {
-    NSMutableArray* args = [NSMutableArray arrayWithObjects: @"RPUSH", key, nil];
-    [args addObjectsFromArray: values];
-    return [self command: args];
+    return [self command:@[@"RPUSH", key] arguments:values];
 }
 
 #pragma mark RPUSHX
@@ -1124,9 +1109,7 @@ static void CollectZSetKeys(CocoaRedis* redis, id key, CocoaPromise* cursorPromi
 }
 
 - (CocoaPromise *)sadd:(id)key values:(NSArray *)values {
-    NSMutableArray* args = [NSMutableArray arrayWithObjects: @"SADD", key, nil];
-    [args addObjectsFromArray: values];
-    return [self command: args];
+    return [self command:@[@"SADD", key] arguments:values];
 }
 
 #pragma mark SCARD
@@ -1140,9 +1123,7 @@ static void CollectZSetKeys(CocoaRedis* redis, id key, CocoaPromise* cursorPromi
 }
 
 - (CocoaPromise *)sdiff:(id)key keys:(NSArray *)keys {
-    NSMutableArray* args = [NSMutableArray arrayWithObjects: @"SDIFF", key, nil];
-    [args addObjectsFromArray: keys];
-    return [[self command: args] then: toNSSet];
+    return [[self command:@[@"SDIFF", key] arguments:keys] then: toNSSet];
 }
 
 #pragma mark SDIFFSTORE
@@ -1151,9 +1132,7 @@ static void CollectZSetKeys(CocoaRedis* redis, id key, CocoaPromise* cursorPromi
 }
 
 - (CocoaPromise *)sdiffstore:(id)dst key:(id)key keys:(NSArray *)keys {
-    NSMutableArray* args = [NSMutableArray arrayWithObjects: @"SDIFFSTORE", key, nil];
-    [args addObjectsFromArray: keys];
-    return [self command: args];
+    return [self command:@[@"SDIFFSTORE", key] arguments:keys];
 }
 
 #pragma mark SINTER
@@ -1162,9 +1141,7 @@ static void CollectZSetKeys(CocoaRedis* redis, id key, CocoaPromise* cursorPromi
 }
 
 - (CocoaPromise *)sinter:(id)key keys:(NSArray *)keys {
-    NSMutableArray* args = [NSMutableArray arrayWithObjects: @"SINTER", key, nil];
-    [args addObjectsFromArray: keys];
-    return [[self command: args] then: toNSSet];
+    return [[self command:@[@"SINTER", key] arguments:keys] then: toNSSet];
 }
 
 #pragma mark SINTERSTORE
@@ -1173,9 +1150,7 @@ static void CollectZSetKeys(CocoaRedis* redis, id key, CocoaPromise* cursorPromi
 }
 
 - (CocoaPromise *)sinterstore:(id)dst key:(id)key keys:(NSArray *)keys {
-    NSMutableArray* args = [NSMutableArray arrayWithObjects: @"SINTERSTORE", key, nil];
-    [args addObjectsFromArray: keys];
-    return [self command: args];
+    return [self command:@[@"SINTERSTORE", key] arguments:keys];
 }
 
 #pragma mark SISMEMBER
@@ -1217,9 +1192,7 @@ static void CollectZSetKeys(CocoaRedis* redis, id key, CocoaPromise* cursorPromi
 }
 
 - (CocoaPromise *)srem:(id)key values:(NSArray *)values {
-    NSMutableArray* args = [NSMutableArray arrayWithObjects: @"SREM", key, nil];
-    [args addObjectsFromArray: values];
-    return [self command: args];
+    return [self command:@[@"SREM", key] arguments:values];
 }
 
 #pragma mark SUNION
@@ -1228,9 +1201,7 @@ static void CollectZSetKeys(CocoaRedis* redis, id key, CocoaPromise* cursorPromi
 }
 
 - (CocoaPromise *)sunion:(id)key keys:(NSArray *)keys {
-    NSMutableArray* args = [NSMutableArray arrayWithObjects: @"SUNION", key, nil];
-    [args addObjectsFromArray: keys];
-    return [[self command: args] then: toNSSet];
+    return [[self command:@[@"SUNION", key] arguments:keys] then: toNSSet];
 }
 
 #pragma mark SUNIONSTORE
@@ -1239,9 +1210,7 @@ static void CollectZSetKeys(CocoaRedis* redis, id key, CocoaPromise* cursorPromi
 }
 
 - (CocoaPromise *)sunionstore:(id)dst key:(id)key keys:(NSArray *)keys {
-    NSMutableArray* args = [NSMutableArray arrayWithObjects: @"SUNIONSTORE", key, nil];
-    [args addObjectsFromArray: keys];
-    return [self command: args];
+    return [self command:@[@"SUNIONSTORE", key] arguments:keys];
 }
 
 #pragma mark SSCAN
@@ -1263,9 +1232,7 @@ static void CollectZSetKeys(CocoaRedis* redis, id key, CocoaPromise* cursorPromi
 }
 
 - (CocoaPromise*) hdel: (id)key fields: (NSArray*)fields {
-    NSMutableArray* args = [NSMutableArray arrayWithObjects: @"HDEL", key, nil];
-    [args addObjectsFromArray: fields];
-    return [self command: args];
+    return [self command:@[@"HDEL", key] arguments:fields];
 }
 
 #pragma mark HEXISTS
@@ -1310,9 +1277,7 @@ static void CollectZSetKeys(CocoaRedis* redis, id key, CocoaPromise* cursorPromi
 }
 
 - (CocoaPromise *)hmget:(id)key fields:(NSArray *)fields {
-    NSMutableArray* args = [NSMutableArray arrayWithObjects: @"HMGET", key, nil];
-    [args addObjectsFromArray: fields];
-    return [self command: args];
+    return [self command:@[@"HMGET", key] arguments:fields];
 }
 
 #pragma mark HMSET
@@ -1321,9 +1286,7 @@ static void CollectZSetKeys(CocoaRedis* redis, id key, CocoaPromise* cursorPromi
 }
 
 - (CocoaPromise *)hmset:(id)key values:(NSArray *)values {
-    NSMutableArray* args = [NSMutableArray arrayWithObjects: @"HMSET", key, nil];
-    [args addObjectsFromArray: values];
-    return [self command: args];
+    return [self command:@[@"HMSET", key] arguments:values];
 }
 
 - (CocoaPromise *)hmset:(id)key dictionary:(NSDictionary *)dict {
@@ -1374,9 +1337,7 @@ static void CollectZSetKeys(CocoaRedis* redis, id key, CocoaPromise* cursorPromi
 }
 
 -(CocoaPromise *)zadd:(id)key values:(NSArray *)values {
-    NSMutableArray* args = [NSMutableArray arrayWithObjects: @"ZADD", key, nil];
-    [args addObjectsFromArray: values];
-    return [self command: args];
+    return [self command:@[@"ZADD", key] arguments:values];
 }
 
 
@@ -1486,9 +1447,7 @@ static void CollectZSetKeys(CocoaRedis* redis, id key, CocoaPromise* cursorPromi
 }
 
 - (CocoaPromise *)zrem:(id)key members:(NSArray *)members {
-    NSMutableArray* args = [NSMutableArray arrayWithObjects: @"ZREM", key, nil];
-    [args addObjectsFromArray: members];
-    return [self command: args];
+    return [self command:@[@"ZREM", key] arguments:members];
 }
 
 #pragma mark ZREMRANGEBYLEX
@@ -1619,9 +1578,7 @@ static void CollectZSetKeys(CocoaRedis* redis, id key, CocoaPromise* cursorPromi
 }
 
 - (CocoaPromise *)geoadd:(id)key values:(NSArray *)values {
-    NSMutableArray* args = [NSMutableArray arrayWithObjects: @"GEOADD", key, nil];
-    [args addObjectsFromArray: values];
-    return [self command: args];
+    return [self command:@[@"GEOADD", key] arguments:values];
 }
 
 #pragma mark GEOHASH
@@ -1630,9 +1587,7 @@ static void CollectZSetKeys(CocoaRedis* redis, id key, CocoaPromise* cursorPromi
 }
 
 - (CocoaPromise *)geohash:(id)key members:(NSArray *)members {
-    NSMutableArray* args = [NSMutableArray arrayWithObjects: @"GEOHASH", key, nil];
-    [args addObjectsFromArray: members];
-    return [self command: args];
+    return [self command:@[@"GEOHASH", key] arguments:members];
 }
 
 #pragma mark GEOPOS
@@ -1641,9 +1596,7 @@ static void CollectZSetKeys(CocoaRedis* redis, id key, CocoaPromise* cursorPromi
 }
 
 - (CocoaPromise *)geopos:(id)key members:(NSArray *)members {
-    NSMutableArray* args = [NSMutableArray arrayWithObjects: @"GEOPOS", key, nil];
-    [args addObjectsFromArray: members];
-    return [[self command: args] then: toGeoPos];
+    return [[self command:@[@"GEOPOS", key] arguments:members] then: toGeoPos];
 }
 
 #pragma mark GEODIST
@@ -1661,9 +1614,7 @@ static void CollectZSetKeys(CocoaRedis* redis, id key, CocoaPromise* cursorPromi
 }
 
 - (CocoaPromise *)georadius:(id)key longitude:(double)lon latitude:(double)lat radius:(double)r options:(NSArray *)options {
-    NSMutableArray* args = [NSMutableArray arrayWithObjects: @"GEORADIUS", key, [NSNumber numberWithDouble:lon], [NSNumber numberWithDouble:lat], [NSNumber numberWithDouble:r], @"m", nil];
-    [args addObjectsFromArray: options];
-    return [self command: args];
+    return [self command:@[@"GEORADIUS", key, [NSNumber numberWithDouble:lon], [NSNumber numberWithDouble:lat], [NSNumber numberWithDouble:r], @"m"] arguments:options];
 }
 
 #pragma mark GEORADIUSBYMEMBER
@@ -1672,9 +1623,7 @@ static void CollectZSetKeys(CocoaRedis* redis, id key, CocoaPromise* cursorPromi
 }
 
 - (CocoaPromise *)georadiusbymember:(id)key member: (id)member radius:(double)r options:(NSArray *)options {
-    NSMutableArray* args = [NSMutableArray arrayWithObjects: @"GEORADIUSBYMEMBER", key, member, [NSNumber numberWithDouble:r], @"m", nil];
-    [args addObjectsFromArray: options];
-    return [self command: args];
+    return [self command:@[@"GEORADIUSBYMEMBER", key, member, [NSNumber numberWithDouble:r], @"m"] arguments:options];
 }
 
 #pragma mark - HYPERLOGLOG
@@ -1685,9 +1634,7 @@ static void CollectZSetKeys(CocoaRedis* redis, id key, CocoaPromise* cursorPromi
 }
 
 - (CocoaPromise *)pfadd:(id)key elements:(NSArray *)elements {
-    NSMutableArray* args = [NSMutableArray arrayWithObjects: @"PFADD", key, nil];
-    [args addObjectsFromArray: elements];
-    return [self command: args];
+    return [self command:@[@"PFADD", key] arguments:elements];
 }
 
 #pragma mark PFCOUNT
@@ -1696,9 +1643,7 @@ static void CollectZSetKeys(CocoaRedis* redis, id key, CocoaPromise* cursorPromi
 }
 
 - (CocoaPromise *)pfcountKeys:(NSArray *)keys {
-    NSMutableArray* args = [NSMutableArray arrayWithObject: @"PFCOUNT"];
-    [args addObjectsFromArray: keys];
-    return [self command: args];
+    return [self command:@[@"PFCOUNT"] arguments:keys];
 }
 
 #pragma mark PFMERGE
@@ -1707,9 +1652,7 @@ static void CollectZSetKeys(CocoaRedis* redis, id key, CocoaPromise* cursorPromi
 }
 
 - (CocoaPromise *)pfmerge:(id)dst sources:(NSArray *)srcs {
-    NSMutableArray* args = [NSMutableArray arrayWithObjects: @"PFMERGE", dst, nil];
-    [args addObjectsFromArray: srcs];
-    return [self command: args];
+    return [self command:@[@"PFMERGE", dst] arguments:srcs];
 }
 
 #pragma mark - TRANSACTIONS
@@ -1740,9 +1683,7 @@ static void CollectZSetKeys(CocoaRedis* redis, id key, CocoaPromise* cursorPromi
 }
 
 - (CocoaPromise *)watchKeys:(NSArray *)keys {
-    NSMutableArray* args = [NSMutableArray arrayWithObject: @"WATCH"];
-    [args addObjectsFromArray: keys];
-    return [self command: args];
+    return [self command:@[@"WATCH"] arguments:keys];
 }
 
 #pragma mark - BGREWRITEAOF
@@ -1765,15 +1706,11 @@ static void CollectZSetKeys(CocoaRedis* redis, id key, CocoaPromise* cursorPromi
 }
 
 - (CocoaPromise *)clientKillByAddress:(NSString *)ipaddr options: (NSArray*)options {
-    NSMutableArray* args = [NSMutableArray arrayWithObjects: @"CLIENT", @"KILL", @"ADDR", ipaddr, nil];
-    [args addObjectsFromArray:options];
-    return [self command: args];
+    return [self command:@[@"CLIENT", @"KILL", @"ADDR", ipaddr] arguments:options];
 }
 
 - (CocoaPromise *)clientKillByID:(NSString *)clientId options:(NSArray *)options {
-    NSMutableArray* args = [NSMutableArray arrayWithObjects: @"CLIENT", @"KILL", @"ID", clientId, nil];
-    [args addObjectsFromArray:options];
-    return [self command: args];
+    return [self command:@[@"CLIENT", @"KILL", @"ID", clientId] arguments:options];
 }
 
 #pragma mark CLIENT LIST
@@ -1810,9 +1747,7 @@ static void CollectZSetKeys(CocoaRedis* redis, id key, CocoaPromise* cursorPromi
 
 #pragma mark COMMAND GETKEYS
 - (CocoaPromise*) commandGetKeys: (NSArray*)values {
-    NSMutableArray* args = [NSMutableArray arrayWithObjects: @"COMMAND", @"GETKEYS", nil];
-    [args addObjectsFromArray: values];
-    return [self command: args];
+    return [self command:@[@"COMMAND", @"GETKEYS"] arguments:values];
 }
 
 #pragma mark COMMAND INFO
@@ -1821,9 +1756,7 @@ static void CollectZSetKeys(CocoaRedis* redis, id key, CocoaPromise* cursorPromi
 }
 
 - (CocoaPromise *)commandInfoForNames:(NSArray *)names {
-    NSMutableArray* args = [NSMutableArray arrayWithObjects: @"COMMAND", @"INFO", nil];
-    [args addObjectsFromArray: names];
-    return [self command: args];
+    return [self command:@[@"COMMAND", @"INFO"] arguments:names];
 }
 
 #pragma mark CONFIG GET
@@ -1907,9 +1840,7 @@ static void CollectZSetKeys(CocoaRedis* redis, id key, CocoaPromise* cursorPromi
 }
 
 - (CocoaPromise *)shutdownAndSave:(BOOL)save {
-    NSMutableArray* args = [NSMutableArray arrayWithObject: @"SHUTDOWN"];
-    [args addObject: save ? @"SAVE" : @"NOSAVE"];
-    return [self command: args];
+    return [self command: @[@"SHUTDOWN", save ? @"SAVE" : @"NOSAVE"]];
 }
 
 #pragma mark SLAVEOF
@@ -1939,13 +1870,11 @@ static void CollectZSetKeys(CocoaRedis* redis, id key, CocoaPromise* cursorPromi
 }
 
 #pragma mark SYNC
-/** http://redis.io/commands/sync */
 - (CocoaPromise*) sync {
     return [self command:@[@"SYNC"]];
 }
 
 #pragma mark TIME
-/** http://redis.io/commands/time */
 - (CocoaPromise*) time {
     return [[self command:@[@"TIME"]] then:^id(id value) {
         NSInteger timestamp = [value[0] integerValue];
@@ -1956,19 +1885,20 @@ static void CollectZSetKeys(CocoaRedis* redis, id key, CocoaPromise* cursorPromi
 #pragma mark - SCRIPTING
 
 #pragma mark - EVAL
-- (CocoaPromise *)eval:(NSString *)script keys:(NSArray *)keys arguments:(NSArray *)arguments {
-    NSMutableArray* args = [NSMutableArray arrayWithObjects: @"EVAL", script, [NSNumber numberWithInteger:keys.count], nil];
+- (CocoaPromise *)_eval: (NSString*)cmd script: (NSString *)script keys:(NSArray *)keys arguments:(NSArray *)arguments {
+    NSMutableArray* args = [NSMutableArray arrayWithObjects: cmd, script, [NSNumber numberWithInteger:keys.count], nil];
     [args addObjectsFromArray: keys];
     [args addObjectsFromArray: arguments];
     return [self command: args];
 }
 
+- (CocoaPromise *)eval:(NSString *)script keys:(NSArray *)keys arguments:(NSArray *)arguments {
+    return [self _eval:@"EVAL" script:script keys:keys arguments:arguments];
+}
+
 #pragma mark - EVAL
 - (CocoaPromise *)evalsha:(NSString *)sha keys:(NSArray *)keys arguments:(NSArray *)arguments {
-    NSMutableArray* args = [NSMutableArray arrayWithObjects: @"EVALSHA", sha, [NSNumber numberWithInteger:keys.count], nil];
-    [args addObjectsFromArray: keys];
-    [args addObjectsFromArray: arguments];
-    return [self command: args];
+    return [self _eval:@"EVALSHA" script:sha keys:keys arguments:arguments];
 }
 
 #pragma mark SCRIPT EXISTS
@@ -1979,9 +1909,7 @@ static void CollectZSetKeys(CocoaRedis* redis, id key, CocoaPromise* cursorPromi
 }
 
 - (CocoaPromise *)scriptListExists:(NSArray *)shaList {
-    NSMutableArray* args = [NSMutableArray arrayWithObjects: @"SCRIPT", @"EXISTS", nil];
-    [args addObjectsFromArray: shaList];
-    return [self command: args];
+    return [self command:@[@"SCRIPT", @"EXISTS"] arguments:shaList];
 }
 
 #pragma mark SCRIPT FLUSH
@@ -2034,7 +1962,6 @@ static void CollectZSetKeys(CocoaRedis* redis, id key, CocoaPromise* cursorPromi
                                    subscribeCallback,
                                    NULL,
                                    (int) count, argv, argvlen);
-    
     
     if( rc != REDIS_OK ) {
         NSError* err = [NSError errorWithDomain: [NSString stringWithUTF8String: self.ctx->errstr]
@@ -2105,7 +2032,6 @@ static void CollectZSetKeys(CocoaRedis* redis, id key, CocoaPromise* cursorPromi
                                    NULL,
                                    (int) count, argv, argvlen);
     
-    
     if( rc != REDIS_OK ) {
         NSError* err = [NSError errorWithDomain: [NSString stringWithUTF8String: self.ctx->errstr]
                                            code: self.ctx->err
@@ -2150,7 +2076,6 @@ static void CollectZSetKeys(CocoaRedis* redis, id key, CocoaPromise* cursorPromi
                                    NULL,
                                    (int) count, argv, argvlen);
     
-    
     if( rc != REDIS_OK ) {
         NSError* err = [NSError errorWithDomain: [NSString stringWithUTF8String: self.ctx->errstr]
                                            code: self.ctx->err
@@ -2160,7 +2085,6 @@ static void CollectZSetKeys(CocoaRedis* redis, id key, CocoaPromise* cursorPromi
     
     return result;
 }
-
 
 #pragma mark UNSUBSCRIBE
 - (CocoaPromise *)unsubscribe {
@@ -2196,7 +2120,6 @@ static void CollectZSetKeys(CocoaRedis* redis, id key, CocoaPromise* cursorPromi
                                    NULL,
                                    (int) count, argv, argvlen);
     
-    
     if( rc != REDIS_OK ) {
         NSError* err = [NSError errorWithDomain: [NSString stringWithUTF8String: self.ctx->errstr]
                                            code: self.ctx->err
@@ -2216,9 +2139,7 @@ static void CollectZSetKeys(CocoaRedis* redis, id key, CocoaPromise* cursorPromi
 }
 
 - (CocoaPromise*) clusterAddSlots: (NSArray*)slots {
-    NSMutableArray* args = [NSMutableArray arrayWithObjects:@"CLUSTER", @"ADDSLOTS", nil];
-    [args addObjectsFromArray: slots];
-    return [self command:args];
+    return [self command:@[@"CLUSTER", @"ADDSLOTS"] arguments:slots];
 }
 
 #pragma mark CLUSTER COUNT-FAILURE-REPORTS
@@ -2237,9 +2158,7 @@ static void CollectZSetKeys(CocoaRedis* redis, id key, CocoaPromise* cursorPromi
 }
 
 - (CocoaPromise*) clusterDelSlots: (NSArray*)slots {
-    NSMutableArray* args = [NSMutableArray arrayWithObjects:@"CLUSTER", @"DELSLOTS", nil];
-    [args addObjectsFromArray: slots];
-    return [self command:args];
+    return [self command:@[@"CLUSTER", @"DELSLOTS"] arguments:slots];
 }
 
 #pragma mark CLUSTER FAILOVER
@@ -2326,7 +2245,6 @@ static void CollectZSetKeys(CocoaRedis* redis, id key, CocoaPromise* cursorPromi
 }
 
 #pragma mark CLUSTER SET-CONFIG-EPOCH
-/** http://redis.io/commands/cluster-set-config-epoch */
 - (CocoaPromise*) clusterSetConfigEpoch: (NSInteger)epoch {
     return [self command:@[@"CLUSTER", @"SET-CONFIG-EPOCH", [NSNumber numberWithInteger:epoch]]];
 }
@@ -2354,7 +2272,6 @@ static void CollectZSetKeys(CocoaRedis* redis, id key, CocoaPromise* cursorPromi
 }
 
 #pragma mark CLUSTER SLOTS
-/** http://redis.io/commands/cluster-slots */
 - (CocoaPromise*) clusterSlots {
     return [[self command:@[@"CLUSTER", @"SLOTS"]] then:^id(id value) {
         
@@ -2381,8 +2298,6 @@ static void CollectZSetKeys(CocoaRedis* redis, id key, CocoaPromise* cursorPromi
         return result;
     }];
 }
-
-
 
 
 @end

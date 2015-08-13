@@ -53,9 +53,6 @@
             </BuildableReference>
             <SkippedTests>
                <Test
-                  Identifier = "HashesCommands/test_HSTRLEN">
-               </Test>
-               <Test
                   Identifier = "PubSubCommands">
                </Test>
                <Test

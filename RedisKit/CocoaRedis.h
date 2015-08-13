@@ -23,6 +23,8 @@ extern NSString * const CocoaRedisMessageNotification;
 - (CocoaPromise*) close;
 
 - (CocoaPromise*) command: (NSArray*)arguments;
+- (CocoaPromise*) command: (NSArray*)command arguments: (NSArray*)arguments;
+
 - (CocoaPromise*) version;
 
 #pragma mark - STRINGS

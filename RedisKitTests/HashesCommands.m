@@ -384,21 +384,25 @@
  */
 #pragma mark HSTRLEN
 - (void) test_HSTRLEN {
-    [self test: @"HSTRLEN"];
-    const NSString* key = [self randomKey];
-    
-    [[[[[self.redis hmset:key values:@[@"f1", @"HelloWorld", @"f2", @99, @"f3", @-256]] then:^id(id value) {
-        XCTAssertEqualObjects(value, @"OK");
-        return [self.redis hstrlen:key field:@"f1"];
-    }] then:^id(id value) {
-        XCTAssertEqualObjects(value, @10);
-        return [self.redis hstrlen:key field:@"f2"];
-    }] then:^id(id value) {
-        XCTAssertEqualObjects(value, @2);
-        return [self.redis hstrlen:key field:@"f3"];
-    }] then:^id(id value) {
-        XCTAssertEqualObjects(value, @4);
-        return [self passed];
+    [[self test:@"HSTRLEN" requires:@"3.2.0"] then:^id(id unused) {
+
+        const NSString* key = [self randomKey];
+        
+        return
+        [[[[[self.redis hmset:key values:@[@"f1", @"HelloWorld", @"f2", @99, @"f3", @-256]] then:^id(id value) {
+            XCTAssertEqualObjects(value, @"OK");
+            return [self.redis hstrlen:key field:@"f1"];
+        }] then:^id(id value) {
+            XCTAssertEqualObjects(value, @10);
+            return [self.redis hstrlen:key field:@"f2"];
+        }] then:^id(id value) {
+            XCTAssertEqualObjects(value, @2);
+            return [self.redis hstrlen:key field:@"f3"];
+        }] then:^id(id value) {
+            XCTAssertEqualObjects(value, @4);
+            return [self passed];
+        }];
+
     }];
     
     [self wait];
