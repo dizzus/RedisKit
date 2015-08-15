@@ -20,13 +20,19 @@
     __block id observer = nil;
     __block NSInteger helloCount = 0;
 
+    NSString* channel1 = [[NSUUID UUID] UUIDString];
+    NSString* channel2 = [[NSUUID UUID] UUIDString];
+
+    NSString* pattern1 = [channel1 stringByAppendingString: @".*"];
+    NSString* pattern2 = [channel2 stringByAppendingString: @".*"];
+
     CocoaRedis* listener = [CocoaRedis new];
     
     [[[[[[[listener connectWithHost: @"localhost"] then:^id(id value) {
-        return [listener psubscribePatterns: @[@"test0.*", @"test1.*"]];
+        return [listener psubscribePatterns: @[pattern1, pattern2]];
     }] then:^id(id value) {
         NSString* pat = value[@"pattern"];
-        XCTAssertTrue( [pat isEqualToString:@"test0.*"] || [pat isEqualToString:@"test1.*"] );
+        XCTAssertTrue( [pat isEqualToString:pattern1] || [pat isEqualToString:pattern2] );
         
         NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
         observer = [center addObserverForName: CocoaRedisMessageNotification
@@ -38,16 +44,16 @@
                         if( [message isEqualToString:@"Hello"] ) ++helloCount;
                     }];
 
-        return [self.redis publish:@"test0.a" message:@"Hello"];
+        return [self.redis publish:[channel1 stringByAppendingString:@".a"] message:@"Hello"];
     }] then:^id(id value) {
         XCTAssertEqualObjects(value, @1);
         
-        return [self.redis publish:@"test1.b" message:@"Hello"];
+        return [self.redis publish:[channel2 stringByAppendingString:@".b"] message:@"Hello"];
     }] then:^id(id value) {
         XCTAssertEqualObjects(value, @1);
         return [listener punsubscribe];
     }] then:^id(id value) {
-        return [listener close];
+        return [listener quit];
     }] then:^id(id value) {
         NSNotificationCenter *center;
         [center removeObserver: observer];
@@ -55,40 +61,42 @@
         XCTAssertEqual(helloCount, 2);
         return [self passed];
     }];
-    
-    [self waitForExpectationsWithTimeout:3 handler:nil];
+
+    [self wait];
 }
 
 #pragma mark PUBSUB
 - (void) test_PUBSUB {
     [self test: @"PUBSUB"];
     
+    NSString* channel = [[NSUUID UUID] UUIDString];
+    NSString* pattern = [[[NSUUID UUID] UUIDString] stringByAppendingString: @".*"];
+    
     CocoaRedis* listener = [CocoaRedis new];
     
     [[[[[[[[listener connectWithHost:@"localhost"] then:^id(id value) {
-        return [listener subscribe:@"test"];
+        return [listener subscribe: channel];
     }] then:^id(id value) {
-        XCTAssertEqualObjects(value[@"channel"], @"test");
-        return [listener psubscribe:@"news.*"];
+        XCTAssertEqualObjects(value[@"channel"], channel);
+        return [listener psubscribe: pattern];
     }] then:^id(id value) {
-        XCTAssertEqualObjects(value[@"pattern"], @"news.*");
+        XCTAssertEqualObjects(value[@"pattern"], pattern);
         return [self.redis pubsubActiveChannels];
     }] then:^id(id value) {
-        NSArray* expected = @[@"test"];
+        NSArray* expected = @[channel];
         XCTAssertEqualObjects(value, expected);
-        return [self.redis pubsubSubscribers: @[@"test"]];
+        return [self.redis pubsubSubscribers: @[channel]];
     }] then:^id(id value) {
-        NSDictionary* expected = @{@"test": @1};
+        NSDictionary* expected = @{channel: @1};
         XCTAssertEqualObjects(value, expected);
         return [self.redis pubsubPatternsCount];
     }] then:^id(id value) {
         XCTAssertEqualObjects(value, @1);
         return [self passed];
     }] then:^id(id value) {
-        // return [listener close];
-        return nil;
+        return [listener quit];
     }];
-    
+
     [self wait];
 }
 
@@ -99,12 +107,13 @@
     __block id observer = nil;
     __block NSInteger helloCount = 0;
 
+    NSString* channel = [[NSUUID UUID] UUIDString];
     CocoaRedis* listener = [CocoaRedis new];
     
     [[[[[listener connectWithHost:@"localhost"] then:^id(id value) {
-        return [listener subscribe:@"test"];
+        return [listener subscribe: channel];
     }] then:^id(id value) {
-        XCTAssertEqualObjects(value[@"channel"], @"test");
+        XCTAssertEqualObjects(value[@"channel"], channel);
 
         NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
         observer = [center addObserverForName: CocoaRedisMessageNotification
@@ -116,10 +125,10 @@
                         if( [message isEqualToString:@"Hello"] ) ++helloCount;
                     }];
      
-        return [self.redis publish:@"test" message:@"Hello"];
+        return [self.redis publish:channel message:@"Hello"];
     }] then:^id(id value) {
         XCTAssertEqualObjects(value, @1);
-        return [self.redis publish:@"test" message:@"Hello"];
+        return [self.redis publish:channel message:@"Hello"];
     }] then:^id(id value) {
         XCTAssertEqualObjects(value, @1);
         
@@ -131,39 +140,38 @@
             [self passed];
         });
 
-        // return [listener close];
-        return nil;
+        return [listener quit];
     }];
-    
-    [self waitForExpectationsWithTimeout:3 handler:nil];
+
+    [self wait];
 }
 
 #pragma mark PUNSUBSCRIBE
 - (void) test_PUNSUBSCRIBE {
     [self test: @"PUNSUBSCRIBE"];
 
+    NSString* pattern = [[[NSUUID UUID] UUIDString] stringByAppendingString: @".*"];
     CocoaRedis* listener = [CocoaRedis new];
     
     [[[[[[[listener connectWithHost:@"localhost"] then:^id(id value) {
-        return [listener psubscribe: @"news.*"];
+        return [listener psubscribe: pattern];
     }] then:^id(id value) {
-        XCTAssertEqualObjects(value[@"pattern"], @"news.*");
+        XCTAssertEqualObjects(value[@"pattern"], pattern);
         return [self.redis pubsubPatternsCount];
     }] then:^id(id value) {
         XCTAssertEqualObjects(value, @1);
         return [listener punsubscribe];
     }] then:^id(id value) {
-        XCTAssertEqualObjects(value[@"pattern"], @"news.*");
+        XCTAssertEqualObjects(value[@"pattern"], pattern);
         return [self.redis pubsubPatternsCount];
     }] then:^id(id value) {
         XCTAssertEqualObjects(value, @0);
         return [self passed];
     }] then:^id(id value) {
-        // return [listener close];
-        return nil;
+        return [listener quit];
     }];
-    
-    [self waitForExpectationsWithTimeout:3 handler:nil];
+
+    [self wait];
 }
 
 
@@ -174,13 +182,16 @@
     __block id observer = nil;
     __block NSInteger count = 0;
     
+    NSString* channel1 = [[NSUUID UUID] UUIDString];
+    NSString* channel2 = [[NSUUID UUID] UUIDString];
+
     CocoaRedis* listener = [CocoaRedis new];
     
     [[[[[listener connectWithHost:@"localhost"] then:^id(id value) {
-        return [listener subscribeChannels: @[@"test1", @"test2"]];
+        return [listener subscribeChannels: @[channel1, channel2]];
     }] then:^id(id value) {
         NSString* ch = value[@"channel"];
-        XCTAssertTrue( [ch isEqualToString:@"test1"] || [ch isEqualToString:@"test2"] );
+        XCTAssertTrue( [ch isEqualToString:channel1] || [ch isEqualToString:channel2] );
 
         NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
         observer = [center addObserverForName: CocoaRedisMessageNotification
@@ -191,15 +202,15 @@
                         NSString* chn = notification.userInfo[@"channel"];
                         NSString* msg = notification.userInfo[@"message"];
                    
-                        if( [chn isEqualToString:@"test1"] && [msg isEqualToString:@"Hello"] ) ++count;
-                        if( [chn isEqualToString:@"test2"] && [msg isEqualToString:@"World"] ) ++count;
+                        if( [chn isEqualToString:channel1] && [msg isEqualToString:@"Hello"] ) ++count;
+                        if( [chn isEqualToString:channel2] && [msg isEqualToString:@"World"] ) ++count;
                     }];
     
-        return [self.redis publish:@"test1" message:@"Hello"];
+        return [self.redis publish:channel1 message:@"Hello"];
     }] then:^id(id value) {
         XCTAssertEqualObjects(value, @1);
 
-        return [self.redis publish:@"test2" message:@"World"];
+        return [self.redis publish:channel2 message:@"World"];
     }] then:^id(id value) {
         XCTAssertEqualObjects(value, @1);
 
@@ -212,11 +223,10 @@
             [self passed];
         });
 
-        // return [listener close];
-        return nil;
+        return [listener quit];
     }];
-    
-    [self waitForExpectationsWithTimeout:3 handler:nil];
+
+    [self wait];
 }
 
 
@@ -224,23 +234,26 @@
 - (void) test_UNSUBSCRIBE {
     [self test: @"UNSUBSCRIBE"];
     
+    NSString* channel1 = [[NSUUID UUID] UUIDString];
+    NSString* channel2 = [[NSUUID UUID] UUIDString];
+
     CocoaRedis* listener = [CocoaRedis new];
     
     [[[[[[[listener connectWithHost:@"localhost"] then:^id(id value) {
-        return [listener subscribeChannels: @[@"test1", @"test2"]];
+        return [listener subscribeChannels: @[channel1, channel2]];
     }] then:^id(id value) {
         NSString* ch = value[@"channel"];
-        XCTAssertTrue( [ch isEqualToString:@"test1"] || [ch isEqualToString:@"test2"] );
+        XCTAssertTrue( [ch isEqualToString:channel1] || [ch isEqualToString:channel2] );
         
         return [self.redis pubsubActiveChannels];
     }] then:^id(id value) {
-        NSSet* expected = [NSSet setWithArray: @[@"test1", @"test2"]];
+        NSSet* expected = [NSSet setWithArray: @[channel1, channel2]];
         XCTAssertTrue( [expected isSubsetOfSet: [NSSet setWithArray:value]] );
         
         return [listener unsubscribe];
     }] then:^id(id value) {
         NSString* ch = value[@"channel"];
-        XCTAssertTrue( [ch isEqualToString:@"test1"] || [ch isEqualToString:@"test2"] );
+        XCTAssertTrue( [ch isEqualToString:channel1] || [ch isEqualToString:channel2] );
         
         return [self.redis pubsubActiveChannels];
     }] then:^id(id value) {
@@ -249,11 +262,10 @@
         
         return [self passed];
     }] then:^id(id value) {
-        return [listener close];
-        return nil;
+        return [listener quit];
     }];
-    
-    [self waitForExpectationsWithTimeout:3 handler:nil];
+
+    [self wait];
 }
 
 @end

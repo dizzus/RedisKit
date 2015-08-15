@@ -266,7 +266,6 @@ static void subscribeCallback(redisAsyncContext *context, void *reply, void *pri
     }
 
     if( reply == NULL ) {
-        NSLog(@"Called with NULL reply");
         return;
     }
 
@@ -288,18 +287,11 @@ static void subscribeCallback(redisAsyncContext *context, void *reply, void *pri
     } else
 
     if( [command isEqualToString:@"message"] ) {
-        //NSCAssert(context->data == NULL, @"Got message before subscribe event");
-        if( context->data != NULL ) {
-            NSLog(@"Got message before subscribe event");
-        }
-        
         NSDictionary* info = @{@"channel": result[1], @"message": result[2]};
         [[NSNotificationCenter defaultCenter] postNotificationName:CocoaRedisMessageNotification object:nil userInfo:info];
     } else
 
     if( [command isEqualToString:@"pmessage"] ) {
-        NSCAssert(context->data == NULL, @"Got pmessage before subscribe event");
-        
         NSDictionary* info = @{@"pattern": result[1], @"channel": result[2], @"message": result[3]};
         [[NSNotificationCenter defaultCenter] postNotificationName:CocoaRedisMessageNotification object:nil userInfo:info];
     }

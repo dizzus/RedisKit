@@ -53,9 +53,6 @@
             </BuildableReference>
             <SkippedTests>
                <Test
-                  Identifier = "PubSubCommands">
-               </Test>
-               <Test
                   Identifier = "ServerCommands/test_BGSAVE">
                </Test>
                <Test
