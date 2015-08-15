@@ -51,11 +51,6 @@
                BlueprintName = "RedisKitTests"
                ReferencedContainer = "container:RedisKit.xcodeproj">
             </BuildableReference>
-            <SkippedTests>
-               <Test
-                  Identifier = "KeysCommands/test_RESTORE">
-               </Test>
-            </SkippedTests>
          </TestableReference>
       </Testables>
       <MacroExpansion>

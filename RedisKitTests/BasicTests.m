@@ -40,7 +40,7 @@
         return nil;
     }];
     
-    [self waitForExpectationsWithTimeout:1 handler:nil];
+    [self waitForExpectationsWithTimeout:2 handler:nil];
 }
 
 - (void)test_Close {
@@ -55,7 +55,7 @@
         return nil;
     }];
     
-    [self waitForExpectationsWithTimeout:1 handler:nil];
+    [self waitForExpectationsWithTimeout:2 handler:nil];
 }
 
 - (void) test_Version {
@@ -70,7 +70,7 @@
         return nil;
     }];
     
-    [self waitForExpectationsWithTimeout:1 handler:nil];
+    [self waitForExpectationsWithTimeout:2 handler:nil];
 }
 
 @end

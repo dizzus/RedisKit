@@ -10,11 +10,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "RedisKit/CocoaRedis.m"
-            timestampString = "461343895.524627"
+            timestampString = "461347041.275707"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "355"
-            endingLineNumber = "355">
+            startingLineNumber = "356"
+            endingLineNumber = "356">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -56,11 +56,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "RedisKit/CocoaRedis.m"
-            timestampString = "461343895.524627"
+            timestampString = "461347041.275707"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "246"
-            endingLineNumber = "246"
+            startingLineNumber = "247"
+            endingLineNumber = "247"
             landmarkName = "monitorCallback()"
             landmarkType = "7">
          </BreakpointContent>
@@ -301,6 +301,244 @@
                   offsetFromSymbolStart = "1313">
                </Location>
             </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "RedisKitTests/KeysCommands.m"
+            timestampString = "461348117.151086"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "376"
+            endingLineNumber = "376"
+            landmarkName = "-test_RESTORE"
+            landmarkType = "5">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "__28-[KeysCommands test_RESTORE]_block_invoke"
+                  moduleName = "RedisKitTests"
+                  urlString = "file:///Users/diz/Desktop/Development/Projects/XCode/RedisKit/RedisKitTests/KeysCommands.m"
+                  timestampString = "461348120.035135"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "376"
+                  endingLineNumber = "376"
+                  offsetFromSymbolStart = "54">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "__28-[KeysCommands test_RESTORE]_block_invoke"
+                  moduleName = "RedisKitTests"
+                  urlString = "file:///Users/diz/Desktop/Development/Projects/XCode/RedisKit/RedisKitTests/KeysCommands.m"
+                  timestampString = "461348120.035313"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "376"
+                  endingLineNumber = "376"
+                  offsetFromSymbolStart = "805">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "__28-[KeysCommands test_RESTORE]_block_invoke"
+                  moduleName = "RedisKitTests"
+                  urlString = "file:///Users/diz/Desktop/Development/Projects/XCode/RedisKit/RedisKitTests/KeysCommands.m"
+                  timestampString = "461348120.035427"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "376"
+                  endingLineNumber = "376"
+                  offsetFromSymbolStart = "933">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "__28-[KeysCommands test_RESTORE]_block_invoke"
+                  moduleName = "RedisKitTests"
+                  urlString = "file:///Users/diz/Desktop/Development/Projects/XCode/RedisKit/RedisKitTests/KeysCommands.m"
+                  timestampString = "461348120.035543"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "376"
+                  endingLineNumber = "376"
+                  offsetFromSymbolStart = "1431">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "RedisKitTests/KeysCommands.m"
+            timestampString = "461348121.988558"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "379"
+            endingLineNumber = "379"
+            landmarkName = "-test_RESTORE"
+            landmarkType = "5">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "__28-[KeysCommands test_RESTORE]_block_invoke423"
+                  moduleName = "RedisKitTests"
+                  urlString = "file:///Users/diz/Desktop/Development/Projects/XCode/RedisKit/RedisKitTests/KeysCommands.m"
+                  timestampString = "461348121.990106"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "379"
+                  endingLineNumber = "379"
+                  offsetFromSymbolStart = "52">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "__28-[KeysCommands test_RESTORE]_block_invoke423"
+                  moduleName = "RedisKitTests"
+                  urlString = "file:///Users/diz/Desktop/Development/Projects/XCode/RedisKit/RedisKitTests/KeysCommands.m"
+                  timestampString = "461348121.990252"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "379"
+                  endingLineNumber = "379"
+                  offsetFromSymbolStart = "691">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "__28-[KeysCommands test_RESTORE]_block_invoke423"
+                  moduleName = "RedisKitTests"
+                  urlString = "file:///Users/diz/Desktop/Development/Projects/XCode/RedisKit/RedisKitTests/KeysCommands.m"
+                  timestampString = "461348121.990365"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "379"
+                  endingLineNumber = "379"
+                  offsetFromSymbolStart = "823">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "__28-[KeysCommands test_RESTORE]_block_invoke423"
+                  moduleName = "RedisKitTests"
+                  urlString = "file:///Users/diz/Desktop/Development/Projects/XCode/RedisKit/RedisKitTests/KeysCommands.m"
+                  timestampString = "461348121.990455"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "379"
+                  endingLineNumber = "379"
+                  offsetFromSymbolStart = "951">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "RedisKitTests/KeysCommands.m"
+            timestampString = "461348123.203637"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "385"
+            endingLineNumber = "385"
+            landmarkName = "-test_RESTORE"
+            landmarkType = "5">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "__28-[KeysCommands test_RESTORE]_block_invoke438"
+                  moduleName = "RedisKitTests"
+                  urlString = "file:///Users/diz/Desktop/Development/Projects/XCode/RedisKit/RedisKitTests/KeysCommands.m"
+                  timestampString = "461348123.205391"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "385"
+                  endingLineNumber = "385"
+                  offsetFromSymbolStart = "56">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "__28-[KeysCommands test_RESTORE]_block_invoke438"
+                  moduleName = "RedisKitTests"
+                  urlString = "file:///Users/diz/Desktop/Development/Projects/XCode/RedisKit/RedisKitTests/KeysCommands.m"
+                  timestampString = "461348123.205537"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "385"
+                  endingLineNumber = "385"
+                  offsetFromSymbolStart = "853">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "__28-[KeysCommands test_RESTORE]_block_invoke438"
+                  moduleName = "RedisKitTests"
+                  urlString = "file:///Users/diz/Desktop/Development/Projects/XCode/RedisKit/RedisKitTests/KeysCommands.m"
+                  timestampString = "461348123.205633"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "385"
+                  endingLineNumber = "385"
+                  offsetFromSymbolStart = "987">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "__28-[KeysCommands test_RESTORE]_block_invoke438"
+                  moduleName = "RedisKitTests"
+                  urlString = "file:///Users/diz/Desktop/Development/Projects/XCode/RedisKit/RedisKitTests/KeysCommands.m"
+                  timestampString = "461348123.20573"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "385"
+                  endingLineNumber = "385"
+                  offsetFromSymbolStart = "1497">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "RedisKitTests/KeysCommands.m"
+            timestampString = "461348124.643665"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "388"
+            endingLineNumber = "388"
+            landmarkName = "-test_RESTORE"
+            landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

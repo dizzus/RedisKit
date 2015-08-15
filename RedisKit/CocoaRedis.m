@@ -47,7 +47,7 @@ static void disconnectCallback(redisAsyncContext *ctx, int status) {
     }
 }
 
-static id parseReply(redisReply* reply, BOOL binary) {
+static id parseReply(redisReply* reply) {
     NSCAssert(reply != NULL, @"NULL reply");
     
     switch(reply->type) {
@@ -57,16 +57,17 @@ static id parseReply(redisReply* reply, BOOL binary) {
         case REDIS_REPLY_STATUS:
             return [NSString stringWithUTF8String: reply->str];
             
-        case REDIS_REPLY_STRING:
-            return binary ?
-                [NSData dataWithBytes: reply->str length: reply->len] :
-                [NSString stringWithUTF8String: reply->str];
+        case REDIS_REPLY_STRING: {
+            NSData* data = [NSData dataWithBytes: reply->str length: reply->len];
+            NSString* utf8 = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+            return utf8 ? utf8 : data;
+        }
             
         case REDIS_REPLY_ARRAY: {
             NSMutableArray* replies = [NSMutableArray arrayWithCapacity: reply->elements];
             for(int i = 0; i < reply->elements; ++i ) {
                 if( reply->element[i] != NULL ) {
-                    [replies addObject: parseReply(reply->element[i], binary)];
+                    [replies addObject: parseReply(reply->element[i])];
                 } else {
                     [replies addObject: [NSNull null]];
                 }
@@ -101,7 +102,7 @@ static void commandCallback(redisAsyncContext *context, void *reply, void *privd
     }
     
     if( reply != NULL  ) {
-        id result = parseReply(reply, NO);
+        id result = parseReply(reply);
 
         if( !result ) {
             [promise reject: [NSError errorWithDomain: @"Cannot parse reply" code:0 userInfo:nil]];
@@ -255,7 +256,7 @@ static void monitorCallback(redisAsyncContext *context, void *reply, void *privd
         return;
     }
 
-    if( (result = parseReply(reply, NO)) == nil ) {
+    if( (result = parseReply(reply)) == nil ) {
         [promise reject: [NSError errorWithDomain:@"Error getting monitor reply" code:0 userInfo:nil]];
     } else if( [result isEqualToString: @"OK"] ) {
         [promise fulfill: @YES];
@@ -278,7 +279,7 @@ static void subscribeCallback(redisAsyncContext *context, void *reply, void *pri
         return;
     }
 
-    if( (result = parseReply(reply, NO)) == nil ) {
+    if( (result = parseReply(reply)) == nil ) {
         [promise reject: [NSError errorWithDomain:@"Error getting subscribe reply" code:0 userInfo:nil]];
         return;
     }

@@ -368,19 +368,24 @@
 #pragma mark RESTORE
 - (void) test_RESTORE {
     [self test: @"RESTORE"];
-    const NSString* key = [self randomKey];
 
-    char bytes[] = "\n\x11\x11\x00\x00\x00\x0e\x00\x00\x00\x03\x00\x00\xf2\x02\xf3\x02\xf4\xff\x06\x00Z1_\x1cg\x04!\x18";
-    NSData* data = [NSData dataWithBytes: bytes length:sizeof(bytes)-1];
-    
-    [[[[self.redis restore:key ttl:0 value:data] then:^id(id value) {
+    const NSString* key1 = [self randomKey];
+    const NSString* key2 = [self randomKey];
+
+    [[[[[self.redis lpush:key1 values:@[@"Hello", @"World"]] then:^id(id value) {
+        XCTAssertEqualObjects(value, @2);
+        return [self.redis dump:key1];
+    }] then:^id(id value) {
+        XCTAssertTrue( [value isKindOfClass:[NSData class]] || [value isKindOfClass:[NSString class]] );
+        if( [value isKindOfClass:[NSString class]] ) {
+            value = [(NSString*)value dataUsingEncoding:NSUTF8StringEncoding];
+        }
+        return [self.redis restore:key2 ttl:0 value:value];
+    }] then:^id(id value) {
         XCTAssertEqualObjects(value, @"OK");
-        return [self.redis command: @[@"TYPE", key]];
+        return [self.redis lrange:key2 range:NSMakeRange(0, -1)];
     }] then:^id(id value) {
-        XCTAssertEqualObjects(value, @"list");
-        return [self.redis lrange:key start:0 stop:-1];
-    }] then:^id(id value) {
-        NSArray* expected = @[@"1", @"2", @"3"];
+        NSArray* expected = @[@"World", @"Hello"];
         XCTAssertEqualObjects(value, expected);
         return [self passed];
     }];
