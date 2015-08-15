@@ -244,15 +244,24 @@ static NSDictionary* parseMonitorString(NSString* string) {
 
 static void monitorCallback(redisAsyncContext *context, void *reply, void *privdata) {
     id result = nil;
-    
-    if( reply != nil && (result = parseReply(reply, NO)) != nil && ![result isEqualToString: @"OK"] ) {
-        @try {
-            NSDictionary* info = parseMonitorString( result );
-            [[NSNotificationCenter defaultCenter] postNotificationName:CocoaRedisMonitorNotification object:nil userInfo:info];
-        } @catch(NSException* ex) {
-            NSLog(@"Monitor exception: %@", ex);
-            NSLog(@"Input string: <<%@>>", result);
-        }
+
+    CocoaPromise* promise = nil;
+    if( context->data != NULL ) {
+        promise = CFBridgingRelease(context->data);
+        context->data = NULL;
+    }
+
+    if( reply == nil ) {
+        return;
+    }
+
+    if( (result = parseReply(reply, NO)) == nil ) {
+        [promise reject: [NSError errorWithDomain:@"Error getting monitor reply" code:0 userInfo:nil]];
+    } else if( [result isEqualToString: @"OK"] ) {
+        [promise fulfill: @YES];
+    } else {
+        NSDictionary* info = parseMonitorString( result );
+        [[NSNotificationCenter defaultCenter] postNotificationName:CocoaRedisMonitorNotification object:nil userInfo:info];
     }
 }
 
@@ -622,7 +631,7 @@ static void CollectZSetKeys(CocoaRedis* redis, id key, CocoaPromise* cursorPromi
 }
 
 - (CocoaPromise*) command:(NSArray *)command arguments:(NSArray *)arguments {
-    return [self command: [command arrayByAddingObjectsFromArray: arguments]];
+    return [self command: [command arrayByAddingObjectsFromArray: (arguments ? arguments : @[])]];
 }
 
 - (NSArray*) parseClientList: (NSString*)reply {
@@ -663,6 +672,10 @@ static void CollectZSetKeys(CocoaRedis* redis, id key, CocoaPromise* cursorPromi
 
 - (CocoaPromise *)bitcount:(id)key start:(NSInteger)start end:(NSInteger)end {
     return [self command: @[@"BITCOUNT", key, [NSNumber numberWithInteger:start], [NSNumber numberWithInteger:end]]];
+}
+
+- (CocoaPromise *)bitcount:(id)key range:(NSRange)range {
+    return [self bitcount:key start:range.location end:(range.location + range.length)];
 }
 
 #pragma mark BITOP
@@ -711,6 +724,10 @@ static void CollectZSetKeys(CocoaRedis* redis, id key, CocoaPromise* cursorPromi
     return [self command: @[@"BITPOS", key, [NSNumber numberWithBool:bit], [NSNumber numberWithInteger:start], [NSNumber numberWithInteger:end]]];
 }
 
+- (CocoaPromise *)bitpos:(id)key value:(BOOL)bit range:(NSRange)range {
+    return [self bitpos:key value:bit start:range.location end:(range.location + range.length)];
+}
+
 #pragma mark DECR
 - (CocoaPromise *)decr:(id)key {
     return [[self command: @[@"DECR", key]] then: toLongLong];
@@ -734,6 +751,10 @@ static void CollectZSetKeys(CocoaRedis* redis, id key, CocoaPromise* cursorPromi
 #pragma mark GETRANGE
 - (CocoaPromise *)getrange:(id)key start:(NSInteger)start end:(NSInteger)end {
     return [self command: @[@"GETRANGE", key, [NSNumber numberWithInteger:start], [NSNumber numberWithInteger:end]]];
+}
+
+- (CocoaPromise *)getrange:(id)key range:(NSRange)range {
+    return [self getrange:key start:range.location end:(range.location + range.length)];
 }
 
 #pragma mark GETSET
@@ -797,40 +818,8 @@ static void CollectZSetKeys(CocoaRedis* redis, id key, CocoaPromise* cursorPromi
     return [self command: @[@"SET", key, value, @"PX", [NSNumber numberWithInteger:ms]]];
 }
 
-- (CocoaPromise *)set:(id)key value:(id)value nx:(BOOL)nx {
-    NSMutableArray* args = [NSMutableArray arrayWithObjects: @"SET", key, value, nil];
-    if(nx) [args addObject: @"NX"];
-    return [self command: args];
-}
-
-- (CocoaPromise *)set:(id)key value:(id)value ex:(NSInteger)sec nx:(BOOL)nx {
-    NSMutableArray* args = [NSMutableArray arrayWithObjects: @"SET", key, value, @"EX", [NSNumber numberWithInteger:sec], nil];
-    if(nx) [args addObject: @"NX"];
-    return [self command: args];
-}
-
-- (CocoaPromise *)set:(id)key value:(id)value px:(NSInteger)ms nx:(BOOL)nx {
-    NSMutableArray* args = [NSMutableArray arrayWithObjects: @"SET", key, value, @"PX", [NSNumber numberWithInteger:ms], nil];
-    if(nx) [args addObject: @"NX"];
-    return [self command: args];
-}
-
-- (CocoaPromise *)set:(id)key value:(id)value xx: (BOOL)xx {
-    NSMutableArray* args = [NSMutableArray arrayWithObjects: @"SET", key, value, nil];
-    if(xx) [args addObject: @"XX"];
-    return [self command: args];
-}
-
-- (CocoaPromise *)set:(id)key value:(id)value ex:(NSInteger)sec xx:(BOOL)xx {
-    NSMutableArray* args = [NSMutableArray arrayWithObjects: @"SET", key, value, @"EX", [NSNumber numberWithInteger:sec], nil];
-    if(xx) [args addObject: @"XX"];
-    return [self command: args];
-}
-
-- (CocoaPromise *)set:(id)key value:(id)value px:(NSInteger)ms xx:(BOOL)xx {
-    NSMutableArray* args = [NSMutableArray arrayWithObjects: @"SET", key, value, @"PX", [NSNumber numberWithInteger:ms], nil];
-    if(xx) [args addObject: @"XX"];
-    return [self command: args];
+- (CocoaPromise*) set:(id)key value:(id)value options:(NSArray *)options {
+    return [self command: @[@"SET", key, value] arguments: options];
 }
 
 #pragma mark SETBIT
@@ -898,18 +887,23 @@ static void CollectZSetKeys(CocoaRedis* redis, id key, CocoaPromise* cursorPromi
     return [self command: @[@"KEYS", pattern]];
 }
 
+#pragma mark MIGRATE
+- (CocoaPromise*) migrate: (NSString*)host port: (NSInteger)port key: (id)key db: (NSInteger)db timeout: (NSInteger)msec options: (NSArray*)options {
+    return [self command: @[@"MIGRATE", host, [NSNumber numberWithInteger:port], key, [NSNumber numberWithInteger:db], [NSNumber numberWithInteger:msec]] arguments:options];
+}
+
 #pragma mark MOVE
-- (CocoaPromise *)move:(id)key db:(NSString *)db {
-    return [self command: @[@"MOVE", key, db]];
+- (CocoaPromise *)move:(id)key db:(NSInteger)db {
+    return [self command: @[@"MOVE", key, [NSNumber numberWithInteger:db]]];
 }
 
 #pragma mark OBJECT
-- (CocoaPromise *)object:(NSString *)subcommand arg:(const NSString *)arg {
-    return [self command: @[@"OBJECT", subcommand, arg]];
+- (CocoaPromise *)object:(NSString *)subcommand key:(id)key {
+    return [self command:@[@"OBJECT", subcommand, key]];
 }
 
-- (CocoaPromise *)object:(NSString *)subcommand args:(NSArray *)args {
-    return [self command:@[@"OBJECT", subcommand] arguments:args];
+- (CocoaPromise *)object:(NSString *)subcommand keys:(NSArray *)keys {
+    return [self command:@[@"OBJECT", subcommand] arguments:keys];
 }
 
 #pragma mark PERSIST
@@ -952,11 +946,15 @@ static void CollectZSetKeys(CocoaRedis* redis, id key, CocoaPromise* cursorPromi
     return [self command: @[@"RESTORE", key, [NSNumber numberWithInteger:ms], value]];
 }
 
-#pragma mark RESTORE
 - (CocoaPromise *)restore:(id)key ttl:(NSInteger)ms value:(NSData *)value restore:(BOOL)restore {
     NSMutableArray* args = [NSMutableArray arrayWithObjects: @"RESTORE", key, [NSNumber numberWithInteger:ms], value, nil];
     if(restore) [args addObject: @"RESTORE"];
     return [self command: args];
+}
+
+#pragma mark SORT
+- (CocoaPromise *)sort:(id)key options:(NSArray *)options {
+    return [self command: @[@"SORT", key] arguments:options];
 }
 
 #pragma mark TTL
@@ -1053,6 +1051,10 @@ static void CollectZSetKeys(CocoaRedis* redis, id key, CocoaPromise* cursorPromi
     return [self command: @[@"LRANGE", key, [NSNumber numberWithInteger:start], [NSNumber numberWithInteger:stop]]];
 }
 
+- (CocoaPromise *)lrange:(id)key range:(NSRange)range {
+    return [self lrange:key start:range.location stop:(range.location + range.length)];
+}
+
 #pragma mark LREM
 - (CocoaPromise *)lrem:(id)key count:(NSInteger)count value:(id)value {
     return [self command: @[@"LREM", key, [NSNumber numberWithInteger:count], value]];
@@ -1066,6 +1068,10 @@ static void CollectZSetKeys(CocoaRedis* redis, id key, CocoaPromise* cursorPromi
 #pragma mark LTRIM
 - (CocoaPromise *)ltrim:(id)key start:(NSInteger)start stop:(NSInteger)stop {
     return [self command: @[@"LTRIM", key, [NSNumber numberWithInteger:start], [NSNumber numberWithInteger:stop]]];
+}
+
+- (CocoaPromise *)ltrim:(id)key range:(NSRange)range {
+    return [self ltrim:key start:range.location stop:(range.location + range.length)];
 }
 
 #pragma mark RPOP
@@ -1110,7 +1116,7 @@ static void CollectZSetKeys(CocoaRedis* redis, id key, CocoaPromise* cursorPromi
 }
 
 #pragma mark SDIFF
-- (CocoaPromise *)sdiff:(id)key1 key:(id)key2 {
+- (CocoaPromise *)sdiff:(id)key1 with:(id)key2 {
     return [[self command: @[@"SDIFF", key1, key2]] then: toNSSet];
 }
 
@@ -1119,7 +1125,7 @@ static void CollectZSetKeys(CocoaRedis* redis, id key, CocoaPromise* cursorPromi
 }
 
 #pragma mark SDIFFSTORE
-- (CocoaPromise *)sdiffstore:(id)dst key1:(id)key1 key2:(id)key2 {
+- (CocoaPromise *)sdiffstore:(id)dst key:(id)key1 with:(id)key2 {
     return [self command: @[@"SDIFFSTORE", dst, key1, key2]];
 }
 
@@ -1128,7 +1134,7 @@ static void CollectZSetKeys(CocoaRedis* redis, id key, CocoaPromise* cursorPromi
 }
 
 #pragma mark SINTER
-- (CocoaPromise *)sinter:(id)key1 key:(id)key2 {
+- (CocoaPromise *)sinter:(id)key1 with:(id)key2 {
     return [[self command: @[@"SINTER", key1, key2]] then: toNSSet];
 }
 
@@ -1137,7 +1143,7 @@ static void CollectZSetKeys(CocoaRedis* redis, id key, CocoaPromise* cursorPromi
 }
 
 #pragma mark SINTERSTORE
-- (CocoaPromise *)sinterstore:(id)dst key1:(id)key1 key2:(id)key2 {
+- (CocoaPromise *)sinterstore:(id)dst key:(id)key1 with:(id)key2 {
     return [self command: @[@"SINTERSTORE", dst, key1, key2]];
 }
 
@@ -1188,7 +1194,7 @@ static void CollectZSetKeys(CocoaRedis* redis, id key, CocoaPromise* cursorPromi
 }
 
 #pragma mark SUNION
-- (CocoaPromise *)sunion:(id)key1 key:(id)key2 {
+- (CocoaPromise *)sunion:(id)key1 with:(id)key2 {
     return [[self command: @[@"SUNION", key1, key2]] then: toNSSet];
 }
 
@@ -1197,7 +1203,7 @@ static void CollectZSetKeys(CocoaRedis* redis, id key, CocoaPromise* cursorPromi
 }
 
 #pragma mark SUNIONSTORE
-- (CocoaPromise *)sunionstore:(id)dst key1:(id)key1 key2:(id)key2 {
+- (CocoaPromise *)sunionstore:(id)dst key:(id)key1 with:(id)key2 {
     return [self command: @[@"SUNIONSTORE", dst, key1, key2]];
 }
 
@@ -1244,12 +1250,12 @@ static void CollectZSetKeys(CocoaRedis* redis, id key, CocoaPromise* cursorPromi
 }
 
 #pragma mark HINCRBY
-- (CocoaPromise *)hincrby:(id)key field:(id)field increment:(uint64_t)value {
+- (CocoaPromise *)hincrby:(id)key field:(id)field value:(uint64_t)value {
     return [self command: @[@"HINCRBY", key, field, [NSNumber numberWithLongLong:value]]];
 }
 
 #pragma mark HINCRBYFLOAT
-- (CocoaPromise *)hincrbyfloat:(id)key field:(id)field increment:(double)value {
+- (CocoaPromise *)hincrbyfloat:(id)key field:(id)field value:(double)value {
     return [[self command: @[@"HINCRBYFLOAT", key, field, [NSNumber numberWithDouble:value]]] then: toDouble];
 }
 
@@ -1344,7 +1350,7 @@ static void CollectZSetKeys(CocoaRedis* redis, id key, CocoaPromise* cursorPromi
 }
 
 #pragma mark ZINCRBY
-- (CocoaPromise *)zincrby:(id)key increment:(double)value member:(id)member {
+- (CocoaPromise *)zincrby:(id)key value:(double)value member:(id)member {
     return [[self command: @[@"ZINCRBY", key, [NSNumber numberWithDouble:value], member]] then: toDouble];
 }
 
@@ -1402,6 +1408,10 @@ static void CollectZSetKeys(CocoaRedis* redis, id key, CocoaPromise* cursorPromi
     return [self command: @[@"ZRANGEBYLEX", key, min, max, @"LIMIT", [NSNumber numberWithInteger:offset], [NSNumber numberWithInteger:count]]];
 }
 
+- (CocoaPromise *)zrangebylex:(id)key min:(id)min max:(id)max range:(NSRange)range {
+    return [self zrangebylex:key min:min max:max offset:range.location count:range.length];
+}
+
 #pragma mark ZREVRANGEBYLEX
 - (CocoaPromise *)zrevrangebylex:(id)key min:(id)min max:(id)max {
     return [self command: @[@"ZREVRANGEBYLEX", key, min, max]];
@@ -1409,6 +1419,10 @@ static void CollectZSetKeys(CocoaRedis* redis, id key, CocoaPromise* cursorPromi
 
 - (CocoaPromise *)zrevrangebylex:(id)key min:(id)min max:(id)max offset:(NSInteger)offset count:(NSInteger)count {
     return [self command: @[@"ZREVRANGEBYLEX", key, min, max, @"LIMIT", [NSNumber numberWithInteger:offset], [NSNumber numberWithInteger:count]]];
+}
+
+- (CocoaPromise*) zrevrangebylex: (id)key min: (id)min max: (id)max range: (NSRange)range {
+    return [self zrevrangebylex:key min:min max:max offset:range.location count:range.length];
 }
 
 #pragma mark ZRANGEBYSCORE
@@ -1424,8 +1438,16 @@ static void CollectZSetKeys(CocoaRedis* redis, id key, CocoaPromise* cursorPromi
     return [self command: @[@"ZRANGEBYSCORE", key, min, max, @"LIMIT", [NSNumber numberWithInteger:offset], [NSNumber numberWithInteger:count]]];
 }
 
--(CocoaPromise *)zrangebyscoreWithScores:(id)key min:(id)min max:(id)max offset:(NSInteger)offset count:(NSInteger)count {
+- (CocoaPromise *)zrangebyscoreWithScores:(id)key min:(id)min max:(id)max offset:(NSInteger)offset count:(NSInteger)count {
     return [self command: @[@"ZRANGEBYSCORE", key, min, max, @"WITHSCORES", @"LIMIT", [NSNumber numberWithInteger:offset], [NSNumber numberWithInteger:count]]];
+}
+
+- (CocoaPromise *)zrangebyscore:(id)key min:(id)min max:(id)max range:(NSRange)range {
+    return [self zrangebyscore:key min:min max:max offset:range.location count:range.length];
+}
+
+- (CocoaPromise *)zrangebyscoreWithScores:(id)key min:(id)min max:(id)max range:(NSRange)range {
+    return [self zrangebyscoreWithScores:key min:min max:max offset:range.location count:range.length];
 }
 
 #pragma mark ZRANK
@@ -1450,6 +1472,10 @@ static void CollectZSetKeys(CocoaRedis* redis, id key, CocoaPromise* cursorPromi
 #pragma mark ZREMRANGEBYRANK
 - (CocoaPromise *)zremrangebyrank:(id)key start:(NSInteger)start stop:(NSInteger)stop {
     return [self command: @[@"ZREMRANGEBYRANK", key, [NSNumber numberWithInteger:start], [NSNumber numberWithInteger:stop]]];
+}
+
+- (CocoaPromise *)zremrangebyrank:(id)key range:(NSRange)range {
+    return [self zremrangebyrank:key start:range.location stop:(range.location + range.length)];
 }
 
 #pragma mark ZREMRANGEBYSCORE
@@ -1479,8 +1505,16 @@ static void CollectZSetKeys(CocoaRedis* redis, id key, CocoaPromise* cursorPromi
     return [self command: @[@"ZREVRANGEBYSCORE", key, min, max, @"LIMIT", [NSNumber numberWithInteger:offset], [NSNumber numberWithInteger:count]]];
 }
 
--(CocoaPromise *)zrevrangebyscoreWithScores:(id)key min:(id)min max:(id)max offset:(NSInteger)offset count:(NSInteger)count {
+- (CocoaPromise *)zrevrangebyscoreWithScores:(id)key min:(id)min max:(id)max offset:(NSInteger)offset count:(NSInteger)count {
     return [self command: @[@"ZREVRANGEBYSCORE", key, min, max, @"WITHSCORES", @"LIMIT", [NSNumber numberWithInteger:offset], [NSNumber numberWithInteger:count]]];
+}
+
+- (CocoaPromise *)zrevrangebyscore:(id)key min:(id)min max:(id)max range: (NSRange)range {
+    return [self zrevrangebyscore:key min:min max:max offset:range.location count:range.length];
+}
+
+- (CocoaPromise *)zrevrangebyscoreWithScores:(id)key min:(id)min max:(id)max range:(NSRange)range {
+    return [self zrevrangebyscoreWithScores:key min:min max:max offset:range.location count:range.length];
 }
 
 #pragma mark ZREVRANK
@@ -1601,21 +1635,21 @@ static void CollectZSetKeys(CocoaRedis* redis, id key, CocoaPromise* cursorPromi
 }
 
 #pragma mark GEORADIUS
-- (CocoaPromise *)georadius:(id)key longitude:(double)lon latitude:(double)lat radius:(double)r {
-    return [self command: @[@"GEORADIUS", key, [NSNumber numberWithDouble:lon], [NSNumber numberWithDouble:lat], [NSNumber numberWithDouble:r], @"m"]];
+- (CocoaPromise *)georadius:(id)key longitude:(double)lon latitude:(double)lat radius:(double)r unit:(NSString *)unit {
+    return [self command: @[@"GEORADIUS", key, [NSNumber numberWithDouble:lon], [NSNumber numberWithDouble:lat], [NSNumber numberWithDouble:r], unit]];
 }
 
-- (CocoaPromise *)georadius:(id)key longitude:(double)lon latitude:(double)lat radius:(double)r options:(NSArray *)options {
-    return [self command:@[@"GEORADIUS", key, [NSNumber numberWithDouble:lon], [NSNumber numberWithDouble:lat], [NSNumber numberWithDouble:r], @"m"] arguments:options];
+- (CocoaPromise *)georadius:(id)key longitude:(double)lon latitude:(double)lat radius:(double)r unit:(NSString *)unit options:(NSArray *)options {
+    return [self command:@[@"GEORADIUS", key, [NSNumber numberWithDouble:lon], [NSNumber numberWithDouble:lat], [NSNumber numberWithDouble:r], unit] arguments:options];
 }
 
 #pragma mark GEORADIUSBYMEMBER
-- (CocoaPromise *)georadiusbymember:(id)key member: (id)member radius:(double)r {
-    return [self command: @[@"GEORADIUSBYMEMBER", key, member, [NSNumber numberWithDouble:r], @"m"]];
+- (CocoaPromise *)georadiusbymember:(id)key member: (id)member radius:(double)r unit:(NSString *)unit {
+    return [self command: @[@"GEORADIUSBYMEMBER", key, member, [NSNumber numberWithDouble:r], unit]];
 }
 
-- (CocoaPromise *)georadiusbymember:(id)key member: (id)member radius:(double)r options:(NSArray *)options {
-    return [self command:@[@"GEORADIUSBYMEMBER", key, member, [NSNumber numberWithDouble:r], @"m"] arguments:options];
+- (CocoaPromise *)georadiusbymember:(id)key member: (id)member radius:(double)r unit:(NSString *)unit options:(NSArray *)options {
+    return [self command:@[@"GEORADIUSBYMEMBER", key, member, [NSNumber numberWithDouble:r], unit] arguments:options];
 }
 
 #pragma mark - HYPERLOGLOG
@@ -1806,8 +1840,24 @@ static void CollectZSetKeys(CocoaRedis* redis, id key, CocoaPromise* cursorPromi
 }
 
 #pragma mark MONITOR
-- (BOOL) monitor {
-    return self.isConnected && redisAsyncCommand(self.ctx, monitorCallback, NULL, "MONITOR") == REDIS_OK;
+- (CocoaPromise*) monitor {
+    CocoaPromise* result = [CocoaPromise new];
+
+    self.ctx->data = (void*) CFBridgingRetain(result);
+    
+    int rc = redisAsyncCommand(self.ctx,
+                               monitorCallback,
+                               NULL,
+                               "MONITOR");
+    
+    if( rc != REDIS_OK ) {
+        NSError* err = [NSError errorWithDomain: [NSString stringWithUTF8String: self.ctx->errstr]
+                                           code: self.ctx->err
+                                       userInfo: nil];
+        [result reject: err];
+    }
+    
+    return result;
 }
 
 #pragma mark ROLE

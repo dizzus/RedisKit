@@ -37,6 +37,7 @@ extern NSString * const CocoaRedisMessageNotification;
 /** http://redis.io/commands/bitcount */
 - (CocoaPromise*) bitcount: (id)key;
 - (CocoaPromise*) bitcount: (id)key start: (NSInteger)start end: (NSInteger)end;
+- (CocoaPromise*) bitcount: (id)key range: (NSRange)range;
 
 #pragma mark BITOP
 /** http://redis.io/commands/bitop */
@@ -57,6 +58,7 @@ extern NSString * const CocoaRedisMessageNotification;
 - (CocoaPromise*) bitpos: (id)key value: (BOOL)bit;
 - (CocoaPromise*) bitpos: (id)key value: (BOOL)bit start: (NSInteger)start;
 - (CocoaPromise*) bitpos: (id)key value: (BOOL)bit start: (NSInteger)start end: (NSInteger)end;
+- (CocoaPromise*) bitpos: (id)key value: (BOOL)bit range: (NSRange)range;
 
 #pragma mark DECR
 /** http://redis.io/commands/decr */
@@ -77,6 +79,7 @@ extern NSString * const CocoaRedisMessageNotification;
 #pragma mark GETRANGE
 /** http://redis.io/commands/getrange */
 - (CocoaPromise*) getrange: (id)key start: (NSInteger)start end: (NSInteger)end;
+- (CocoaPromise*) getrange: (id)key range: (NSRange)range;
 
 #pragma mark GETSET
 /** http://redis.io/commands/getset */
@@ -117,14 +120,7 @@ extern NSString * const CocoaRedisMessageNotification;
 - (CocoaPromise*) set: (id)key value: (id)value;
 - (CocoaPromise*) set: (id)key value: (id)value ex: (NSInteger)sec;
 - (CocoaPromise*) set: (id)key value: (id)value px: (NSInteger)ms;
-
-- (CocoaPromise*) set: (id)key value: (id)value nx: (BOOL)nx;
-- (CocoaPromise*) set: (id)key value: (id)value ex: (NSInteger)sec nx: (BOOL)nx;
-- (CocoaPromise*) set: (id)key value: (id)value px: (NSInteger)ms nx: (BOOL)nx;
-
-- (CocoaPromise*) set: (id)key value: (id)value xx: (BOOL)xx;
-- (CocoaPromise*) set: (id)key value: (id)value ex: (NSInteger)sec xx: (BOOL)xx;
-- (CocoaPromise*) set: (id)key value: (id)value px: (NSInteger)ms xx: (BOOL)xx;
+- (CocoaPromise*) set: (id)key value: (id)value options: (NSArray*)options;
 
 #pragma mark SETBIT
 /** http://redis.io/commands/setbit */
@@ -176,16 +172,18 @@ extern NSString * const CocoaRedisMessageNotification;
 /** http://redis.io/commands/keys */
 - (CocoaPromise*) keys: (id)pattern;
 
-/* MIGRATE: not implemented */
+#pragma mark MIGRATE
+/** http://redis.io/commands/migrate */
+- (CocoaPromise*) migrate: (NSString*)host port: (NSInteger)port key: (id)key db: (NSInteger)db timeout: (NSInteger)msec options: (NSArray*)options;
 
 #pragma mark MOVE
 /** http://redis.io/commands/move */
-- (CocoaPromise*) move: (id)key db: (NSString*)db;
+- (CocoaPromise*) move: (id)key db: (NSInteger)db;
 
 #pragma mark OBJECT
 /** http://redis.io/commands/object */
-- (CocoaPromise*) object: (NSString*)subcommand arg: (const NSString*)arg;
-- (CocoaPromise*) object: (NSString*)subcommand args: (NSArray*)args;
+- (CocoaPromise*) object: (NSString*)subcommand key: (id)key;
+- (CocoaPromise*) object: (NSString*)subcommand keys: (NSArray*)keys;
 
 #pragma mark PERSIST
 /** http://redis.io/commands/persist */
@@ -220,8 +218,9 @@ extern NSString * const CocoaRedisMessageNotification;
 - (CocoaPromise*) restore: (id)key ttl: (NSInteger)ms value: (NSData*)value;
 - (CocoaPromise*) restore: (id)key ttl: (NSInteger)ms value: (NSData*)value restore: (BOOL)restore;
 
-/* SORT: not implemented */
+#pragma mark SORT
 /** http://redis.io/commands/sort */
+- (CocoaPromise*) sort: (id)key options: (NSArray*)options;
 
 #pragma mark TTL
 /** http://redis.io/commands/ttl */
@@ -283,6 +282,7 @@ extern NSString * const CocoaRedisMessageNotification;
 #pragma mark LRANGE
 /** http://redis.io/commands/lrange */
 - (CocoaPromise*) lrange: (id)key start: (NSInteger)start stop: (NSInteger)stop;
+- (CocoaPromise*) lrange: (id)key range: (NSRange)range;
 
 #pragma mark LREM
 /** http://redis.io/commands/lrem */
@@ -295,6 +295,7 @@ extern NSString * const CocoaRedisMessageNotification;
 #pragma mark LTRIM
 /** http://redis.io/commands/ltrim */
 - (CocoaPromise*) ltrim: (id)key start: (NSInteger)start stop: (NSInteger)stop;
+- (CocoaPromise*) ltrim: (id)key range: (NSRange)range;
 
 #pragma mark RPOP
 /** http://redis.io/commands/rpop */
@@ -326,23 +327,23 @@ extern NSString * const CocoaRedisMessageNotification;
 
 #pragma mark SDIFF
 /** http://redis.io/commands/sdiff */
-- (CocoaPromise*) sdiff: (id)key1 key: (id)key2;
-- (CocoaPromise*) sdiff: (id)key  keys: (NSArray*)keys;
+- (CocoaPromise*) sdiff: (id)key1 with: (id)key2;
+- (CocoaPromise*) sdiff: (id)key keys: (NSArray*)keys;
 
 #pragma mark SDIFFSTORE
 /** http://redis.io/commands/sdiffstore */
-- (CocoaPromise*) sdiffstore: (id)dst key1: (id)key1 key2: (id)key2;
-- (CocoaPromise*) sdiffstore: (id)dst key:  (id)key  keys: (NSArray*)keys;
+- (CocoaPromise*) sdiffstore: (id)dst key: (id)key1 with: (id)key2;
+- (CocoaPromise*) sdiffstore: (id)dst key: (id)key  keys: (NSArray*)keys;
 
 #pragma mark SINTER
 /** http://redis.io/commands/sinter */
-- (CocoaPromise*) sinter: (id)key1 key: (id)key2;
+- (CocoaPromise*) sinter: (id)key1 with: (id)key2;
 - (CocoaPromise*) sinter: (id)key  keys: (NSArray*)keys;
 
 #pragma mark SINTERSTORE
 /** http://redis.io/commands/sinterstore */
-- (CocoaPromise*) sinterstore: (id)dst key1: (id)key1 key2: (id)key2;
-- (CocoaPromise*) sinterstore: (id)dst key:  (id)key  keys: (NSArray*)keys;
+- (CocoaPromise*) sinterstore: (id)dst key: (id)key1 with: (id)key2;
+- (CocoaPromise*) sinterstore: (id)dst key: (id)key  keys: (NSArray*)keys;
 
 #pragma mark SISMEMBER
 /** http://redis.io/commands/sismember */
@@ -373,13 +374,13 @@ extern NSString * const CocoaRedisMessageNotification;
 
 #pragma mark SUNION
 /** http://redis.io/commands/sunion */
-- (CocoaPromise*) sunion: (id)key1 key:  (id)key2;
+- (CocoaPromise*) sunion: (id)key1 with: (id)key2;
 - (CocoaPromise*) sunion: (id)key  keys: (NSArray*)keys;
 
 #pragma mark SUNIONSTORE
 /** http://redis.io/commands/sunionstore */
-- (CocoaPromise*) sunionstore: (id)dst key1: (id)key1 key2: (id)key2;
-- (CocoaPromise*) sunionstore: (id)dst key:  (id)key  keys: (NSArray*)keys;
+- (CocoaPromise*) sunionstore: (id)dst key: (id)key1 with: (id)key2;
+- (CocoaPromise*) sunionstore: (id)dst key: (id)key  keys: (NSArray*)keys;
 
 #pragma mark SSCAN
 /** http://redis.io/commands/sscan */
@@ -406,11 +407,11 @@ extern NSString * const CocoaRedisMessageNotification;
 
 #pragma mark HINCRBY
 /** http://redis.io/commands/hincrby */
-- (CocoaPromise*) hincrby: (id)key field: (id)field increment: (uint64_t)value;
+- (CocoaPromise*) hincrby: (id)key field: (id)field value: (uint64_t)value;
 
 #pragma mark HINCRBYFLOAT
 /** http://redis.io/commands/hincrbyfloat */
-- (CocoaPromise*) hincrbyfloat: (id)key field: (id)field increment: (double)value;
+- (CocoaPromise*) hincrbyfloat: (id)key field: (id)field value: (double)value;
 
 #pragma mark HKEYS
 /** http://redis.io/commands/hkeys */
@@ -468,7 +469,7 @@ extern NSString * const CocoaRedisMessageNotification;
 
 #pragma mark ZINCRBY
 /** http://redis.io/commands/zincrby */
-- (CocoaPromise*) zincrby: (id)key increment: (double)value member: (id)member;
+- (CocoaPromise*) zincrby: (id)key value: (double)value member: (id)member;
 
 #pragma mark ZINTERSTORE
 /** http://redis.io/commands/zinterstore */
@@ -490,11 +491,13 @@ extern NSString * const CocoaRedisMessageNotification;
 /** http://redis.io/commands/zrangebylex */
 - (CocoaPromise*) zrangebylex: (id)key min: (id)min max: (id)max;
 - (CocoaPromise*) zrangebylex: (id)key min: (id)min max: (id)max offset: (NSInteger)offset count: (NSInteger)count;
+- (CocoaPromise*) zrangebylex: (id)key min: (id)min max: (id)max range: (NSRange)range;
 
 #pragma mark ZREVRANGEBYLEX
 /** http://redis.io/commands/zrevrangebylex */
 - (CocoaPromise*) zrevrangebylex: (id)key min: (id)min max: (id)max;
 - (CocoaPromise*) zrevrangebylex: (id)key min: (id)min max: (id)max offset: (NSInteger)offset count: (NSInteger)count;
+- (CocoaPromise*) zrevrangebylex: (id)key min: (id)min max: (id)max range: (NSRange)range;
 
 #pragma mark ZRANGEBYSCORE
 /** http://redis.io/commands/zrangebyscore */
@@ -503,6 +506,9 @@ extern NSString * const CocoaRedisMessageNotification;
 
 - (CocoaPromise*) zrangebyscore: (id)key min: (id)min max: (id)max offset: (NSInteger)offset count: (NSInteger)count;
 - (CocoaPromise*) zrangebyscoreWithScores: (id)key min: (id)min max: (id)max offset: (NSInteger)offset count: (NSInteger)count;
+
+- (CocoaPromise*) zrangebyscore: (id)key min: (id)min max: (id)max range: (NSRange)range;
+- (CocoaPromise*) zrangebyscoreWithScores: (id)key min: (id)min max: (id)max range: (NSRange)range;
 
 #pragma mark ZRANK
 /** http://redis.io/commands/zrank */
@@ -520,6 +526,7 @@ extern NSString * const CocoaRedisMessageNotification;
 #pragma mark ZREMRANGEBYRANK
 /** http://redis.io/commands/zremrangebyrank */
 - (CocoaPromise*) zremrangebyrank: (id)key start: (NSInteger)start stop: (NSInteger)stop;
+- (CocoaPromise*) zremrangebyrank: (id)key range: (NSRange)range;
 
 #pragma mark ZREMRANGEBYSCORE
 /** http://redis.io/commands/zremrangebyscore */
@@ -537,6 +544,9 @@ extern NSString * const CocoaRedisMessageNotification;
 
 - (CocoaPromise*) zrevrangebyscore: (id)key min: (id)min max: (id)max offset: (NSInteger)offset count: (NSInteger)count;
 - (CocoaPromise*) zrevrangebyscoreWithScores: (id)key min: (id)min max: (id)max offset: (NSInteger)offset count: (NSInteger)count;
+
+- (CocoaPromise*) zrevrangebyscore: (id)key min: (id)min max: (id)max range: (NSRange)range;
+- (CocoaPromise*) zrevrangebyscoreWithScores: (id)key min: (id)min max: (id)max range: (NSRange)range;
 
 #pragma mark ZREVRANK
 /** http://redis.io/commands/zrevrank */
@@ -603,13 +613,13 @@ extern NSString * const CocoaRedisMessageNotification;
 
 #pragma mark GEORADIUS
 /** http://redis.io/commands/georadius */
-- (CocoaPromise*) georadius: (id)key longitude: (double)lon latitude: (double)lat radius: (double)r;
-- (CocoaPromise*) georadius: (id)key longitude: (double)lon latitude: (double)lat radius: (double)r options: (NSArray*)options;
+- (CocoaPromise*) georadius: (id)key longitude: (double)lon latitude: (double)lat radius: (double)r unit: (NSString*)unit;
+- (CocoaPromise*) georadius: (id)key longitude: (double)lon latitude: (double)lat radius: (double)r unit: (NSString*)unit options: (NSArray*)options;
 
 #pragma mark GEORADIUSBYMEMBER
 /** http://redis.io/commands/georadiusbymember */
-- (CocoaPromise*) georadiusbymember: (id)key member: (id)member radius: (double)r;
-- (CocoaPromise*) georadiusbymember: (id)key member: (id)member radius: (double)r options: (NSArray*)options;
+- (CocoaPromise*) georadiusbymember: (id)key member: (id)member radius: (double)r unit: (NSString*)unit;
+- (CocoaPromise*) georadiusbymember: (id)key member: (id)member radius: (double)r unit: (NSString*)unit options: (NSArray*)options;
 
 
 #pragma mark - HYPERLOGLOG
@@ -747,7 +757,7 @@ extern NSString * const CocoaRedisMessageNotification;
 
 #pragma mark MONITOR
 /** http://redis.io/commands/monitor */
-- (BOOL) monitor;
+- (CocoaPromise*) monitor;
 
 #pragma mark ROLE
 /** http://redis.io/commands/role */

@@ -53,10 +53,7 @@
             </BuildableReference>
             <SkippedTests>
                <Test
-                  Identifier = "ServerCommands/test_BGSAVE">
-               </Test>
-               <Test
-                  Identifier = "ServerCommands/test_CLIENT_LIST">
+                  Identifier = "KeysCommands/test_RESTORE">
                </Test>
             </SkippedTests>
          </TestableReference>

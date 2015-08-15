@@ -154,9 +154,30 @@
     [self wait];
 }
 
-/* MIGRATE: not implemented */
+/* MIGRATE: need two servers to test */
 
-/* MOVE: TODO */
+#pragma mark MOVE
+- (void) test_MOVE {
+    [self test: @"MOVE"];
+
+    const NSString* key = [self randomKey];
+    
+    [[[[[self.redis set: key value: @"Hello World"] then:^id(id value) {
+        XCTAssertEqualObjects(value, @"OK");
+        return [self.redis move:key db:14];
+    }] then:^id(id value) {
+        XCTAssertEqualObjects(value, @1);
+        return [self.redis select:14];
+    }] then:^id(id value) {
+        XCTAssertEqualObjects(value, @"OK");
+        return [self.redis get:key];
+    }] then:^id(id value) {
+        XCTAssertEqualObjects(value, @"Hello World");
+        return [self passed];
+    }];
+    
+    [self wait];
+}
 
 #pragma mark OBJECT
 - (void) test_OBJECT {
@@ -166,13 +187,13 @@
     [[[
     [[self.redis lpush:key value:@"Hello World"] then:^id(id value) {
         XCTAssertEqualObjects(value, @1);
-        return [self.redis object:@"refcount" arg:key];
+        return [self.redis object:@"refcount" key:key];
     }] then:^id(id value) {
         XCTAssertEqualObjects(value, @1);
-        return [self.redis object:@"encoding" arg:key];
+        return [self.redis object:@"encoding" key:key];
     }] then:^id(id value) {
-        XCTAssertEqualObjects(value, @"ziplist");
-        return [self.redis object:@"idletime" arg:key];
+        XCTAssertTrue( [value isEqualToString:@"ziplist"] || [value isEqualToString:@"quicklist"] );
+        return [self.redis object:@"idletime" key:key];
     }] then:^id(id value) {
         XCTAssertTrue( [value integerValue] >= 0 );
         return [self passed];
@@ -366,6 +387,8 @@
     
     [self wait];
 }
+
+/* TODO: test SORT */
 
 #pragma mark TTL
 - (void) test_TTL {

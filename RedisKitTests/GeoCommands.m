@@ -62,11 +62,11 @@ BOOL isEqualGeopos(NSArray* p1, NSArray* p2) {
             return [self.redis geodist:key from:@"Palermo" to:@"Catania"];
         }] then:^id(id value) {
             XCTAssertEqualObjects( roundNumber(value, 5), rounded(166274.15156960039) );
-            return [self.redis georadius:key longitude:15 latitude:37 radius:100000];
+            return [self.redis georadius:key longitude:15 latitude:37 radius:100 unit:@"km"];
         }] then:^id(id value) {
             NSArray* expected = @[@"Catania"];
             XCTAssertEqualObjects(value, expected);
-            return [self.redis georadius:key longitude:15 latitude:37 radius:200000];
+            return [self.redis georadius:key longitude:15 latitude:37 radius:200 unit:@"km"];
         }] then:^id(id value) {
             NSArray* expected = @[@"Palermo", @"Catania"];
             XCTAssertEqualObjects(value, expected);
@@ -223,7 +223,7 @@ BOOL isEqualGeopos(NSArray* p1, NSArray* p2) {
         return
         [[[self.redis geoadd:key values:@[@13.361389, @38.115556, @"Palermo", @15.087269, @37.502669, @"Catania"]] then:^id(id value) {
             XCTAssertEqualObjects(value, @2);
-            return [self.redis georadius:key longitude:15 latitude:37 radius:200000 options:@[@"WITHDIST"]];
+            return [self.redis georadius:key longitude:15 latitude:37 radius:200 unit: @"km" options:@[@"WITHDIST"]];
         }] then:^id(id value) {
             return [self passed];
         }];
@@ -255,7 +255,7 @@ BOOL isEqualGeopos(NSArray* p1, NSArray* p2) {
             return [self.redis geoadd:key values:@[@13.361389, @38.115556, @"Palermo", @15.087269, @37.502669, @"Catania"]];
         }] then:^id(id value) {
             XCTAssertEqualObjects(value, @2);
-            return [self.redis georadiusbymember:key member:@"Agrigento" radius:100000];
+            return [self.redis georadiusbymember:key member:@"Agrigento" radius:100 unit: @"km"];
         }] then:^id(id value) {
             NSArray* expected = @[@"Agrigento", @"Palermo"];
             XCTAssertEqualObjects(value, expected);

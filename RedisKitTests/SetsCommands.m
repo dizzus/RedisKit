@@ -96,7 +96,7 @@
         return [self.redis sadd:key2 value:@"e"];
     }] then:^id(id value) {
         XCTAssertEqualObjects(value, @1);
-        return [self.redis sdiff:key1 key:key2];
+        return [self.redis sdiff:key1 with:key2];
     }] then:^id(id value) {
         NSSet* expected = [NSSet setWithArray: @[@"a", @"b"]];
         XCTAssertEqualObjects(value, expected);
@@ -150,7 +150,7 @@
         return [self.redis sadd:key2 value:@"e"];
     }] then:^id(id value) {
         XCTAssertEqualObjects(value, @1);
-        return [self.redis sdiffstore:key3 key1:key1 key2:key2];
+        return [self.redis sdiffstore:key3 key:key1 with:key2];
     }] then:^id(id value) {
         XCTAssertEqualObjects(value, @2);
         return [self.redis smembers:key3];
@@ -203,7 +203,7 @@
         return [self.redis sadd:key2 value:@"e"];
     }] then:^id(id value) {
         XCTAssertEqualObjects(value, @1);
-        return [self.redis sinter:key1 key:key2];
+        return [self.redis sinter:key1 with:key2];
     }] then:^id(id value) {
         NSSet* expected = [NSSet setWithArray: @[@"c"]];
         XCTAssertEqualObjects(value, expected);
@@ -257,7 +257,7 @@
         return [self.redis sadd:key2 value:@"e"];
     }] then:^id(id value) {
         XCTAssertEqualObjects(value, @1);
-        return [self.redis sinterstore:key3 key1:key1 key2:key2];
+        return [self.redis sinterstore:key3 key:key1 with:key2];
     }] then:^id(id value) {
         XCTAssertEqualObjects(value, @1);
         return [self.redis smembers:key3];
@@ -529,7 +529,7 @@
         return [self.redis sadd:key2 value:@"e"];
     }] then:^id(id value) {
         XCTAssertEqualObjects(value, @1);
-        return [self.redis sunion:key1 key:key2];
+        return [self.redis sunion:key1 with:key2];
     }] then:^id(id value) {
         NSSet* expected = [NSSet setWithArray: @[@"a", @"b", @"c", @"d", @"e"]];
         XCTAssertEqualObjects(value, expected);
@@ -586,7 +586,7 @@
         return [self.redis sadd:key2 value:@"e"];
     }] then:^id(id value) {
         XCTAssertEqualObjects(value, @1);
-        return [self.redis sunionstore:key3 key1:key1 key2:key2];
+        return [self.redis sunionstore:key3 key:key1 with:key2];
     }] then:^id(id value) {
         XCTAssertEqualObjects(value, @5);
         return [self.redis smembers:key3];

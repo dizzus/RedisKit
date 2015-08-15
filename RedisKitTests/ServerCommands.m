@@ -47,12 +47,21 @@ static void PingLoop(CocoaRedis* redis, NSInteger counter, NSInteger max, CocoaP
 - (void) test_BGSAVE {
     [self test: @"BGSAVE"];
     
-    [[self.redis bgsave] then:^id(id value) {
+    [[[self.redis bgsave] then:^id(id value) {
+        NSLog(@"+++ BGSAVE: %@", value);
         XCTAssertTrue( [value isEqualToString:@"Background saving started"] || [value isEqualToString:@"OK"] );
         return [self passed];
+    }] catch:^id(NSError *err) {
+        NSString* expected = @"ERR Can't BGSAVE while AOF log rewriting is in progress";
+        if( [err.domain isEqualToString:expected] ) {
+            [self passed];
+        } else {
+            NSLog(@"--- BGSAVE error: %@", err);
+        }
+        return nil;
     }];
     
-    [self wait];
+    [self waitForExpectationsWithTimeout:3 handler:nil];
 }
 
 #pragma mark CLIENT KILL
@@ -74,11 +83,12 @@ static void PingLoop(CocoaRedis* redis, NSInteger counter, NSInteger max, CocoaP
     }] then:^id(id value) {
         XCTAssertTrue([self isArray:value]);
 
-        NSDictionary* client = value[0];
-        XCTAssertTrue([self isDictionary:client]);
-
-        NSString* addr = [client[@"addr"] substringToIndex:9];
-        XCTAssertTrue( [addr isEqualToString: @"127.0.0.1"] && [client[@"name"] isEqualToString:name] );
+        BOOL found = NO;
+        for( NSDictionary* client in value ) {
+            XCTAssertTrue([self isDictionary:client]);
+            if( [client[@"name"] isEqualToString:name] ) found = YES;
+        }
+        XCTAssertTrue(found);
 
         return [self passed];
     }];
@@ -448,21 +458,23 @@ static void PingLoop(CocoaRedis* redis, NSInteger counter, NSInteger max, CocoaP
 
     CocoaRedis* monitor = [CocoaRedis new];
     
-    [[monitor connectWithHost:@"localhost"] then:^id(id value) {
-        if( [monitor monitor] ) {
-            NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
-            observer = [center addObserverForName: CocoaRedisMonitorNotification
-                                object: nil
-                                 queue: nil
-                            usingBlock: ^(NSNotification *notification)
-            {
-                NSString* command = notification.userInfo[@"command"];
-                if( [command isEqualToString:@"PING"] ) ++pingCount;
-            }];
-            
-            PingLoop(self.redis, 0, expectedPing, [self.redis ping], result);
-        }
-        
+    [[[monitor connectWithHost:@"localhost"] then:^id(id value) {
+        return [monitor monitor];
+    }] then:^id(id value) {
+        XCTAssertEqualObjects(value, @YES);
+
+        NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+        observer = [center addObserverForName: CocoaRedisMonitorNotification
+                            object: nil
+                             queue: nil
+                        usingBlock: ^(NSNotification *notification)
+        {
+            NSString* command = notification.userInfo[@"command"];
+            if( [command isEqualToString:@"PING"] ) ++pingCount;
+        }];
+
+        PingLoop(self.redis, 0, expectedPing, [self.redis ping], result);
+     
         return nil;
     }];
     

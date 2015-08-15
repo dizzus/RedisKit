@@ -152,13 +152,13 @@
     
     [[[[[self.redis hset:key field:@"field" value:@5] then:^id(id value) {
         XCTAssertEqualObjects(value, @1);
-        return [self.redis hincrby:key field:@"field" increment:1];
+        return [self.redis hincrby:key field:@"field" value:1];
     }] then:^id(id value) {
         XCTAssertEqualObjects(value, @6);
-        return [self.redis hincrby:key field:@"field" increment:-1];
+        return [self.redis hincrby:key field:@"field" value:-1];
     }] then:^id(id value) {
         XCTAssertEqualObjects(value, @5);
-        return [self.redis hincrby:key field:@"field" increment:-10];
+        return [self.redis hincrby:key field:@"field" value:-10];
     }] then:^id(id value) {
         XCTAssertEqualObjects(value, @-5);
         return [self passed];
@@ -186,13 +186,13 @@
 
     [[[[[self.redis hset:key field:@"field" value:@10.5] then:^id(id value) {
         XCTAssertEqualObjects(value, @1);
-        return [self.redis hincrbyfloat:key field:@"field" increment:0.1];
+        return [self.redis hincrbyfloat:key field:@"field" value:0.1];
     }] then:^id(id value) {
         XCTAssertEqualObjects(value, @10.6);
         return [self.redis hset:key field:@"field" value:@5.0e3];
     }] then:^id(id value) {
         XCTAssertEqualObjects(value, @0);
-        return [self.redis hincrbyfloat:key field:@"field" increment:2.0e2];
+        return [self.redis hincrbyfloat:key field:@"field" value:2.0e2];
     }] then:^id(id value) {
         XCTAssertEqualObjects(value, @5200);
         return [self passed];

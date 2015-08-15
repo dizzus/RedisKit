@@ -143,7 +143,7 @@
         return [self.redis zadd:key score:2 member:@"two"];
     }] then:^id(id value) {
         XCTAssertEqualObjects(value, @1);
-        return [self.redis zincrby:key increment:2 member:@"one"];
+        return [self.redis zincrby:key value:2 member:@"one"];
     }] then:^id(id value) {
         XCTAssertEqualObjects(value, @3.0);
         return [self.redis zrangeWithScores:key start:0 stop:-1];
