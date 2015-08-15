@@ -11,6 +11,8 @@
 
 #import "CocoaRedis.h"
 
+#define REDIS_ADDRESS @"192.168.92.169"
+
 @interface RedisTestCase : XCTestCase
 
 @property CocoaRedis* redis;

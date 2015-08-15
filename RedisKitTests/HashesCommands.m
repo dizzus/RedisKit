@@ -473,7 +473,7 @@
         return [self passed];
     }];
     
-    [self wait];
+    [self waitForExpectationsWithTimeout:3 handler:nil];
 }
 
 

@@ -28,7 +28,7 @@
 
     CocoaRedis* listener = [CocoaRedis new];
     
-    [[[[[[[listener connectWithHost: @"localhost"] then:^id(id value) {
+    [[[[[[[listener connectWithHost: REDIS_ADDRESS] then:^id(id value) {
         return [listener psubscribePatterns: @[pattern1, pattern2]];
     }] then:^id(id value) {
         NSString* pat = value[@"pattern"];
@@ -74,7 +74,7 @@
     
     CocoaRedis* listener = [CocoaRedis new];
     
-    [[[[[[[[listener connectWithHost:@"localhost"] then:^id(id value) {
+    [[[[[[[[listener connectWithHost: REDIS_ADDRESS] then:^id(id value) {
         return [listener subscribe: channel];
     }] then:^id(id value) {
         XCTAssertEqualObjects(value[@"channel"], channel);
@@ -110,7 +110,7 @@
     NSString* channel = [[NSUUID UUID] UUIDString];
     CocoaRedis* listener = [CocoaRedis new];
     
-    [[[[[listener connectWithHost:@"localhost"] then:^id(id value) {
+    [[[[[listener connectWithHost: REDIS_ADDRESS] then:^id(id value) {
         return [listener subscribe: channel];
     }] then:^id(id value) {
         XCTAssertEqualObjects(value[@"channel"], channel);
@@ -153,7 +153,7 @@
     NSString* pattern = [[[NSUUID UUID] UUIDString] stringByAppendingString: @".*"];
     CocoaRedis* listener = [CocoaRedis new];
     
-    [[[[[[[listener connectWithHost:@"localhost"] then:^id(id value) {
+    [[[[[[[listener connectWithHost: REDIS_ADDRESS] then:^id(id value) {
         return [listener psubscribe: pattern];
     }] then:^id(id value) {
         XCTAssertEqualObjects(value[@"pattern"], pattern);
@@ -187,7 +187,7 @@
 
     CocoaRedis* listener = [CocoaRedis new];
     
-    [[[[[listener connectWithHost:@"localhost"] then:^id(id value) {
+    [[[[[listener connectWithHost: REDIS_ADDRESS] then:^id(id value) {
         return [listener subscribeChannels: @[channel1, channel2]];
     }] then:^id(id value) {
         NSString* ch = value[@"channel"];
@@ -239,7 +239,7 @@
 
     CocoaRedis* listener = [CocoaRedis new];
     
-    [[[[[[[listener connectWithHost:@"localhost"] then:^id(id value) {
+    [[[[[[[listener connectWithHost: REDIS_ADDRESS] then:^id(id value) {
         return [listener subscribeChannels: @[channel1, channel2]];
     }] then:^id(id value) {
         NSString* ch = value[@"channel"];

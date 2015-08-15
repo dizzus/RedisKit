@@ -66,7 +66,7 @@ NSUInteger intVersion(NSString* strVer) {
     XCTestExpectation* exp = [self expectationWithDescription: @"Connecting"];
     self.redis = [CocoaRedis new];
     
-    [[[[[self.redis connectWithHost: @"localhost"] then:^id(id value) {
+    [[[[[self.redis connectWithHost: REDIS_ADDRESS] then:^id(id value) {
         return [self.redis select:15];
     }] then:^id(id value) {
         return [self.redis flushdb];

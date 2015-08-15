@@ -139,5 +139,169 @@
             </Locations>
          </BreakpointContent>
       </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "RedisKitTests/HashesCommands.m"
+            timestampString = "461346127.587046"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "451"
+            endingLineNumber = "451"
+            landmarkName = "-test_HSCAN"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "RedisKitTests/HashesCommands.m"
+            timestampString = "461346141.323462"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "469"
+            endingLineNumber = "469"
+            landmarkName = "-test_HSCAN"
+            landmarkType = "5">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "__28-[HashesCommands test_HSCAN]_block_invoke346"
+                  moduleName = "RedisKitTests"
+                  urlString = "file:///Users/diz/Desktop/Development/Projects/XCode/RedisKit/RedisKitTests/HashesCommands.m"
+                  timestampString = "461346146.361897"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "469"
+                  endingLineNumber = "469"
+                  offsetFromSymbolStart = "50">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "__28-[HashesCommands test_HSCAN]_block_invoke346"
+                  moduleName = "RedisKitTests"
+                  urlString = "file:///Users/diz/Desktop/Development/Projects/XCode/RedisKit/RedisKitTests/HashesCommands.m"
+                  timestampString = "461346146.36206"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "469"
+                  endingLineNumber = "469"
+                  offsetFromSymbolStart = "765">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "__28-[HashesCommands test_HSCAN]_block_invoke346"
+                  moduleName = "RedisKitTests"
+                  urlString = "file:///Users/diz/Desktop/Development/Projects/XCode/RedisKit/RedisKitTests/HashesCommands.m"
+                  timestampString = "461346146.362209"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "469"
+                  endingLineNumber = "469"
+                  offsetFromSymbolStart = "893">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "__28-[HashesCommands test_HSCAN]_block_invoke346"
+                  moduleName = "RedisKitTests"
+                  urlString = "file:///Users/diz/Desktop/Development/Projects/XCode/RedisKit/RedisKitTests/HashesCommands.m"
+                  timestampString = "461346146.36242"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "469"
+                  endingLineNumber = "469"
+                  offsetFromSymbolStart = "1391">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "RedisKitTests/HashesCommands.m"
+            timestampString = "461346164.994799"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "472"
+            endingLineNumber = "472"
+            landmarkName = "-test_HSCAN"
+            landmarkType = "5">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "__28-[HashesCommands test_HSCAN]_block_invoke354"
+                  moduleName = "RedisKitTests"
+                  urlString = "file:///Users/diz/Desktop/Development/Projects/XCode/RedisKit/RedisKitTests/HashesCommands.m"
+                  timestampString = "461346249.277173"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "472"
+                  endingLineNumber = "472"
+                  offsetFromSymbolStart = "50">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "__28-[HashesCommands test_HSCAN]_block_invoke354"
+                  moduleName = "RedisKitTests"
+                  urlString = "file:///Users/diz/Desktop/Development/Projects/XCode/RedisKit/RedisKitTests/HashesCommands.m"
+                  timestampString = "461346249.27735"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "472"
+                  endingLineNumber = "472"
+                  offsetFromSymbolStart = "687">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "__28-[HashesCommands test_HSCAN]_block_invoke354"
+                  moduleName = "RedisKitTests"
+                  urlString = "file:///Users/diz/Desktop/Development/Projects/XCode/RedisKit/RedisKitTests/HashesCommands.m"
+                  timestampString = "461346249.277599"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "472"
+                  endingLineNumber = "472"
+                  offsetFromSymbolStart = "815">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "__28-[HashesCommands test_HSCAN]_block_invoke354"
+                  moduleName = "RedisKitTests"
+                  urlString = "file:///Users/diz/Desktop/Development/Projects/XCode/RedisKit/RedisKitTests/HashesCommands.m"
+                  timestampString = "461346249.277889"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "472"
+                  endingLineNumber = "472"
+                  offsetFromSymbolStart = "1313">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
    </Breakpoints>
 </Bucket>

@@ -12,6 +12,7 @@
 #import <XCTest/XCTest.h>
 
 #import "CocoaRedis.h"
+#import "RedisTestCase.h"
 
 @interface BasicTests : XCTestCase
 @end
@@ -31,7 +32,7 @@
     XCTestExpectation* test = [self expectationWithDescription: @"Open connection test"];
 
     CocoaRedis* redis = [CocoaRedis new];
-    [[[redis connectWithHost: @"localhost"] then:^id(id value) {
+    [[[redis connectWithHost: REDIS_ADDRESS] then:^id(id value) {
         XCTAssertTrue(redis.isConnected);
         [test fulfill];
         return [redis close];
@@ -46,7 +47,7 @@
     XCTestExpectation* test = [self expectationWithDescription: @"Close connection test"];
     
     CocoaRedis* redis = [CocoaRedis new];
-    [[[redis connectWithHost: @"localhost"] then:^id(id value) {
+    [[[redis connectWithHost: REDIS_ADDRESS] then:^id(id value) {
         return [redis close];
     }] then:^id(id value) {
         XCTAssertTrue(!redis.isConnected);
@@ -61,7 +62,7 @@
     XCTestExpectation* test = [self expectationWithDescription: @"Version test"];
     
     CocoaRedis* redis = [CocoaRedis new];
-    [[[redis connectWithHost: @"localhost"] then:^id(id value) {
+    [[[redis connectWithHost: REDIS_ADDRESS] then:^id(id value) {
         return [redis version];
     }] then:^id(id value) {
         XCTAssertNotNil(value);

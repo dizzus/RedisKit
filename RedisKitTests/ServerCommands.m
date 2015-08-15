@@ -458,7 +458,7 @@ static void PingLoop(CocoaRedis* redis, NSInteger counter, NSInteger max, CocoaP
 
     CocoaRedis* monitor = [CocoaRedis new];
     
-    [[[monitor connectWithHost:@"localhost"] then:^id(id value) {
+    [[[monitor connectWithHost: REDIS_ADDRESS] then:^id(id value) {
         return [monitor monitor];
     }] then:^id(id value) {
         XCTAssertEqualObjects(value, @YES);
