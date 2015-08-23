@@ -12,31 +12,31 @@
 		66322C161B64C97900FBA9C8 /* KeysCommands.m in Sources */ = {isa = PBXBuildFile; fileRef = 66322C151B64C97900FBA9C8 /* KeysCommands.m */; };
 		66322C181B64DCC400FBA9C8 /* ListsCommands.m in Sources */ = {isa = PBXBuildFile; fileRef = 66322C171B64DCC400FBA9C8 /* ListsCommands.m */; };
 		66322C1A1B654BE400FBA9C8 /* SetsCommands.m in Sources */ = {isa = PBXBuildFile; fileRef = 66322C191B654BE400FBA9C8 /* SetsCommands.m */; };
-		664EB19C1B6E5F9600B54BD8 /* async.c in Sources */ = {isa = PBXBuildFile; fileRef = 664EB18E1B6E5F9600B54BD8 /* async.c */; };
-		664EB19D1B6E5F9600B54BD8 /* async.h in Headers */ = {isa = PBXBuildFile; fileRef = 664EB18F1B6E5F9600B54BD8 /* async.h */; };
-		664EB19E1B6E5F9600B54BD8 /* dict.c in Sources */ = {isa = PBXBuildFile; fileRef = 664EB1901B6E5F9600B54BD8 /* dict.c */; };
-		664EB19F1B6E5F9600B54BD8 /* dict.h in Headers */ = {isa = PBXBuildFile; fileRef = 664EB1911B6E5F9600B54BD8 /* dict.h */; };
-		664EB1A01B6E5F9600B54BD8 /* fmacros.h in Headers */ = {isa = PBXBuildFile; fileRef = 664EB1921B6E5F9600B54BD8 /* fmacros.h */; };
-		664EB1A11B6E5F9600B54BD8 /* hiredis.c in Sources */ = {isa = PBXBuildFile; fileRef = 664EB1931B6E5F9600B54BD8 /* hiredis.c */; };
-		664EB1A21B6E5F9600B54BD8 /* hiredis.h in Headers */ = {isa = PBXBuildFile; fileRef = 664EB1941B6E5F9600B54BD8 /* hiredis.h */; };
-		664EB1A31B6E5F9600B54BD8 /* net.c in Sources */ = {isa = PBXBuildFile; fileRef = 664EB1951B6E5F9600B54BD8 /* net.c */; };
-		664EB1A41B6E5F9600B54BD8 /* net.h in Headers */ = {isa = PBXBuildFile; fileRef = 664EB1961B6E5F9600B54BD8 /* net.h */; };
-		664EB1A51B6E5F9600B54BD8 /* read.c in Sources */ = {isa = PBXBuildFile; fileRef = 664EB1971B6E5F9600B54BD8 /* read.c */; };
-		664EB1A61B6E5F9600B54BD8 /* read.h in Headers */ = {isa = PBXBuildFile; fileRef = 664EB1981B6E5F9600B54BD8 /* read.h */; };
-		664EB1A71B6E5F9600B54BD8 /* sds.c in Sources */ = {isa = PBXBuildFile; fileRef = 664EB1991B6E5F9600B54BD8 /* sds.c */; };
-		664EB1A81B6E5F9600B54BD8 /* sds.h in Headers */ = {isa = PBXBuildFile; fileRef = 664EB19A1B6E5F9600B54BD8 /* sds.h */; };
-		664EB1A91B6E5F9600B54BD8 /* win32.h in Headers */ = {isa = PBXBuildFile; fileRef = 664EB19B1B6E5F9600B54BD8 /* win32.h */; };
 		665C84031B5D57DF00F6C4C1 /* RedisKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 665C84021B5D57DF00F6C4C1 /* RedisKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		665C84091B5D57DF00F6C4C1 /* RedisKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 665C83FD1B5D57DF00F6C4C1 /* RedisKit.framework */; };
-		665C84391B5D589200F6C4C1 /* CocoaPromise.h in Headers */ = {isa = PBXBuildFile; fileRef = 665C84371B5D589200F6C4C1 /* CocoaPromise.h */; };
-		665C843A1B5D589200F6C4C1 /* CocoaPromise.m in Sources */ = {isa = PBXBuildFile; fileRef = 665C84381B5D589200F6C4C1 /* CocoaPromise.m */; };
 		665C843C1B5D595300F6C4C1 /* CocoaRedis.m in Sources */ = {isa = PBXBuildFile; fileRef = 665C843B1B5D595300F6C4C1 /* CocoaRedis.m */; };
-		665C843F1B5D5F4C00F6C4C1 /* macosx.h in Headers */ = {isa = PBXBuildFile; fileRef = 665C843E1B5D5F4C00F6C4C1 /* macosx.h */; };
 		6664A32F1B6A4FD300067E96 /* ConnectionCommands.m in Sources */ = {isa = PBXBuildFile; fileRef = 6664A32E1B6A4FD300067E96 /* ConnectionCommands.m */; };
 		6664A3311B6A617700067E96 /* GeoCommands.m in Sources */ = {isa = PBXBuildFile; fileRef = 6664A3301B6A617700067E96 /* GeoCommands.m */; };
 		6664A3331B6B967F00067E96 /* HyperLogLogCommands.m in Sources */ = {isa = PBXBuildFile; fileRef = 6664A3321B6B967F00067E96 /* HyperLogLogCommands.m */; };
 		6664A3351B6BAB0C00067E96 /* RedisTestCase.m in Sources */ = {isa = PBXBuildFile; fileRef = 6664A3341B6BAB0C00067E96 /* RedisTestCase.m */; };
 		6664A3381B6BB01900067E96 /* TranscationsCommands.m in Sources */ = {isa = PBXBuildFile; fileRef = 6664A3371B6BB01900067E96 /* TranscationsCommands.m */; };
+		668D25151B89ED19001330F5 /* async.c in Sources */ = {isa = PBXBuildFile; fileRef = 668D25061B89ED19001330F5 /* async.c */; };
+		668D25161B89ED19001330F5 /* async.h in Headers */ = {isa = PBXBuildFile; fileRef = 668D25071B89ED19001330F5 /* async.h */; };
+		668D25171B89ED19001330F5 /* dict.c in Sources */ = {isa = PBXBuildFile; fileRef = 668D25081B89ED19001330F5 /* dict.c */; };
+		668D25181B89ED19001330F5 /* dict.h in Headers */ = {isa = PBXBuildFile; fileRef = 668D25091B89ED19001330F5 /* dict.h */; };
+		668D25191B89ED19001330F5 /* fmacros.h in Headers */ = {isa = PBXBuildFile; fileRef = 668D250A1B89ED19001330F5 /* fmacros.h */; };
+		668D251A1B89ED19001330F5 /* hiredis.c in Sources */ = {isa = PBXBuildFile; fileRef = 668D250B1B89ED19001330F5 /* hiredis.c */; };
+		668D251B1B89ED19001330F5 /* hiredis.h in Headers */ = {isa = PBXBuildFile; fileRef = 668D250C1B89ED19001330F5 /* hiredis.h */; };
+		668D251C1B89ED19001330F5 /* macosx.h in Headers */ = {isa = PBXBuildFile; fileRef = 668D250D1B89ED19001330F5 /* macosx.h */; };
+		668D251D1B89ED19001330F5 /* net.c in Sources */ = {isa = PBXBuildFile; fileRef = 668D250E1B89ED19001330F5 /* net.c */; };
+		668D251E1B89ED19001330F5 /* net.h in Headers */ = {isa = PBXBuildFile; fileRef = 668D250F1B89ED19001330F5 /* net.h */; };
+		668D251F1B89ED19001330F5 /* read.c in Sources */ = {isa = PBXBuildFile; fileRef = 668D25101B89ED19001330F5 /* read.c */; };
+		668D25201B89ED19001330F5 /* read.h in Headers */ = {isa = PBXBuildFile; fileRef = 668D25111B89ED19001330F5 /* read.h */; };
+		668D25211B89ED19001330F5 /* sds.c in Sources */ = {isa = PBXBuildFile; fileRef = 668D25121B89ED19001330F5 /* sds.c */; };
+		668D25221B89ED19001330F5 /* sds.h in Headers */ = {isa = PBXBuildFile; fileRef = 668D25131B89ED19001330F5 /* sds.h */; };
+		668D25231B89ED19001330F5 /* win32.h in Headers */ = {isa = PBXBuildFile; fileRef = 668D25141B89ED19001330F5 /* win32.h */; };
+		668D25271B89ED8B001330F5 /* CocoaPromise.h in Headers */ = {isa = PBXBuildFile; fileRef = 668D25251B89ED8B001330F5 /* CocoaPromise.h */; };
+		668D25281B89ED8B001330F5 /* CocoaPromise.m in Sources */ = {isa = PBXBuildFile; fileRef = 668D25261B89ED8B001330F5 /* CocoaPromise.m */; };
 		66B4D8501B68DCD900EEA922 /* SortedSetsCommands.m in Sources */ = {isa = PBXBuildFile; fileRef = 66B4D84F1B68DCD900EEA922 /* SortedSetsCommands.m */; };
 		66B754F61B681C5900BB822B /* HashesCommands.m in Sources */ = {isa = PBXBuildFile; fileRef = 66B754F51B681C5900BB822B /* HashesCommands.m */; };
 		66CEB0F61B6F9A4D0083B575 /* ClusterCommands.m in Sources */ = {isa = PBXBuildFile; fileRef = 66CEB0F51B6F9A4D0083B575 /* ClusterCommands.m */; };
@@ -61,30 +61,13 @@
 		66322C151B64C97900FBA9C8 /* KeysCommands.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KeysCommands.m; sourceTree = "<group>"; };
 		66322C171B64DCC400FBA9C8 /* ListsCommands.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ListsCommands.m; sourceTree = "<group>"; };
 		66322C191B654BE400FBA9C8 /* SetsCommands.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SetsCommands.m; sourceTree = "<group>"; };
-		664EB18E1B6E5F9600B54BD8 /* async.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = async.c; sourceTree = "<group>"; };
-		664EB18F1B6E5F9600B54BD8 /* async.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = async.h; sourceTree = "<group>"; };
-		664EB1901B6E5F9600B54BD8 /* dict.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dict.c; sourceTree = "<group>"; };
-		664EB1911B6E5F9600B54BD8 /* dict.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dict.h; sourceTree = "<group>"; };
-		664EB1921B6E5F9600B54BD8 /* fmacros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fmacros.h; sourceTree = "<group>"; };
-		664EB1931B6E5F9600B54BD8 /* hiredis.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = hiredis.c; sourceTree = "<group>"; };
-		664EB1941B6E5F9600B54BD8 /* hiredis.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = hiredis.h; sourceTree = "<group>"; };
-		664EB1951B6E5F9600B54BD8 /* net.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = net.c; sourceTree = "<group>"; };
-		664EB1961B6E5F9600B54BD8 /* net.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = net.h; sourceTree = "<group>"; };
-		664EB1971B6E5F9600B54BD8 /* read.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = read.c; sourceTree = "<group>"; };
-		664EB1981B6E5F9600B54BD8 /* read.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = read.h; sourceTree = "<group>"; };
-		664EB1991B6E5F9600B54BD8 /* sds.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sds.c; sourceTree = "<group>"; };
-		664EB19A1B6E5F9600B54BD8 /* sds.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sds.h; sourceTree = "<group>"; };
-		664EB19B1B6E5F9600B54BD8 /* win32.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = win32.h; sourceTree = "<group>"; };
 		665C83FD1B5D57DF00F6C4C1 /* RedisKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = RedisKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		665C84011B5D57DF00F6C4C1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		665C84021B5D57DF00F6C4C1 /* RedisKit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RedisKit.h; sourceTree = "<group>"; };
 		665C84081B5D57DF00F6C4C1 /* RedisKitTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RedisKitTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		665C840E1B5D57DF00F6C4C1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		665C84371B5D589200F6C4C1 /* CocoaPromise.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CocoaPromise.h; sourceTree = "<group>"; };
-		665C84381B5D589200F6C4C1 /* CocoaPromise.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CocoaPromise.m; sourceTree = "<group>"; };
 		665C843B1B5D595300F6C4C1 /* CocoaRedis.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CocoaRedis.m; sourceTree = "<group>"; };
 		665C843D1B5D597700F6C4C1 /* CocoaRedis.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CocoaRedis.h; sourceTree = "<group>"; };
-		665C843E1B5D5F4C00F6C4C1 /* macosx.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = macosx.h; sourceTree = "<group>"; };
 		6664A32E1B6A4FD300067E96 /* ConnectionCommands.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ConnectionCommands.m; sourceTree = "<group>"; };
 		6664A3301B6A617700067E96 /* GeoCommands.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeoCommands.m; sourceTree = "<group>"; };
 		6664A3321B6B967F00067E96 /* HyperLogLogCommands.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HyperLogLogCommands.m; sourceTree = "<group>"; };
@@ -93,6 +76,23 @@
 		6664A3371B6BB01900067E96 /* TranscationsCommands.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TranscationsCommands.m; sourceTree = "<group>"; };
 		668D25031B89EBBF001330F5 /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		668D25041B89EBBF001330F5 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		668D25061B89ED19001330F5 /* async.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = async.c; sourceTree = "<group>"; };
+		668D25071B89ED19001330F5 /* async.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = async.h; sourceTree = "<group>"; };
+		668D25081B89ED19001330F5 /* dict.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dict.c; sourceTree = "<group>"; };
+		668D25091B89ED19001330F5 /* dict.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dict.h; sourceTree = "<group>"; };
+		668D250A1B89ED19001330F5 /* fmacros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fmacros.h; sourceTree = "<group>"; };
+		668D250B1B89ED19001330F5 /* hiredis.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = hiredis.c; sourceTree = "<group>"; };
+		668D250C1B89ED19001330F5 /* hiredis.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = hiredis.h; sourceTree = "<group>"; };
+		668D250D1B89ED19001330F5 /* macosx.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = macosx.h; sourceTree = "<group>"; };
+		668D250E1B89ED19001330F5 /* net.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = net.c; sourceTree = "<group>"; };
+		668D250F1B89ED19001330F5 /* net.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = net.h; sourceTree = "<group>"; };
+		668D25101B89ED19001330F5 /* read.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = read.c; sourceTree = "<group>"; };
+		668D25111B89ED19001330F5 /* read.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = read.h; sourceTree = "<group>"; };
+		668D25121B89ED19001330F5 /* sds.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sds.c; sourceTree = "<group>"; };
+		668D25131B89ED19001330F5 /* sds.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sds.h; sourceTree = "<group>"; };
+		668D25141B89ED19001330F5 /* win32.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = win32.h; sourceTree = "<group>"; };
+		668D25251B89ED8B001330F5 /* CocoaPromise.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CocoaPromise.h; sourceTree = "<group>"; };
+		668D25261B89ED8B001330F5 /* CocoaPromise.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CocoaPromise.m; sourceTree = "<group>"; };
 		66B4D84F1B68DCD900EEA922 /* SortedSetsCommands.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SortedSetsCommands.m; sourceTree = "<group>"; };
 		66B754F51B681C5900BB822B /* HashesCommands.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HashesCommands.m; sourceTree = "<group>"; };
 		66CEB0F51B6F9A4D0083B575 /* ClusterCommands.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ClusterCommands.m; sourceTree = "<group>"; };
@@ -125,8 +125,8 @@
 			children = (
 				668D25031B89EBBF001330F5 /* LICENSE */,
 				668D25041B89EBBF001330F5 /* README.md */,
-				665C84361B5D586700F6C4C1 /* Promises */,
-				665C84191B5D57F900F6C4C1 /* HiRedis */,
+				668D25241B89ED8B001330F5 /* PromiseKit */,
+				668D25051B89ED19001330F5 /* Hiredis */,
 				665C83FF1B5D57DF00F6C4C1 /* RedisKit */,
 				665C840C1B5D57DF00F6C4C1 /* RedisKitTests */,
 				665C83FE1B5D57DF00F6C4C1 /* Products */,
@@ -194,35 +194,35 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		665C84191B5D57F900F6C4C1 /* HiRedis */ = {
+		668D25051B89ED19001330F5 /* Hiredis */ = {
 			isa = PBXGroup;
 			children = (
-				664EB18E1B6E5F9600B54BD8 /* async.c */,
-				664EB18F1B6E5F9600B54BD8 /* async.h */,
-				664EB1901B6E5F9600B54BD8 /* dict.c */,
-				664EB1911B6E5F9600B54BD8 /* dict.h */,
-				664EB1921B6E5F9600B54BD8 /* fmacros.h */,
-				664EB1931B6E5F9600B54BD8 /* hiredis.c */,
-				664EB1941B6E5F9600B54BD8 /* hiredis.h */,
-				664EB1951B6E5F9600B54BD8 /* net.c */,
-				664EB1961B6E5F9600B54BD8 /* net.h */,
-				664EB1971B6E5F9600B54BD8 /* read.c */,
-				664EB1981B6E5F9600B54BD8 /* read.h */,
-				664EB1991B6E5F9600B54BD8 /* sds.c */,
-				664EB19A1B6E5F9600B54BD8 /* sds.h */,
-				664EB19B1B6E5F9600B54BD8 /* win32.h */,
-				665C843E1B5D5F4C00F6C4C1 /* macosx.h */,
+				668D25061B89ED19001330F5 /* async.c */,
+				668D25071B89ED19001330F5 /* async.h */,
+				668D25081B89ED19001330F5 /* dict.c */,
+				668D25091B89ED19001330F5 /* dict.h */,
+				668D250A1B89ED19001330F5 /* fmacros.h */,
+				668D250B1B89ED19001330F5 /* hiredis.c */,
+				668D250C1B89ED19001330F5 /* hiredis.h */,
+				668D250D1B89ED19001330F5 /* macosx.h */,
+				668D250E1B89ED19001330F5 /* net.c */,
+				668D250F1B89ED19001330F5 /* net.h */,
+				668D25101B89ED19001330F5 /* read.c */,
+				668D25111B89ED19001330F5 /* read.h */,
+				668D25121B89ED19001330F5 /* sds.c */,
+				668D25131B89ED19001330F5 /* sds.h */,
+				668D25141B89ED19001330F5 /* win32.h */,
 			);
-			name = HiRedis;
+			path = Hiredis;
 			sourceTree = "<group>";
 		};
-		665C84361B5D586700F6C4C1 /* Promises */ = {
+		668D25241B89ED8B001330F5 /* PromiseKit */ = {
 			isa = PBXGroup;
 			children = (
-				665C84371B5D589200F6C4C1 /* CocoaPromise.h */,
-				665C84381B5D589200F6C4C1 /* CocoaPromise.m */,
+				668D25251B89ED8B001330F5 /* CocoaPromise.h */,
+				668D25261B89ED8B001330F5 /* CocoaPromise.m */,
 			);
-			name = Promises;
+			path = PromiseKit;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -232,17 +232,17 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				664EB1A01B6E5F9600B54BD8 /* fmacros.h in Headers */,
-				664EB19F1B6E5F9600B54BD8 /* dict.h in Headers */,
-				664EB1A41B6E5F9600B54BD8 /* net.h in Headers */,
-				664EB1A81B6E5F9600B54BD8 /* sds.h in Headers */,
-				665C84391B5D589200F6C4C1 /* CocoaPromise.h in Headers */,
-				664EB1A21B6E5F9600B54BD8 /* hiredis.h in Headers */,
+				668D25181B89ED19001330F5 /* dict.h in Headers */,
+				668D251B1B89ED19001330F5 /* hiredis.h in Headers */,
+				668D251E1B89ED19001330F5 /* net.h in Headers */,
+				668D25221B89ED19001330F5 /* sds.h in Headers */,
+				668D251C1B89ED19001330F5 /* macosx.h in Headers */,
+				668D25161B89ED19001330F5 /* async.h in Headers */,
+				668D25201B89ED19001330F5 /* read.h in Headers */,
+				668D25191B89ED19001330F5 /* fmacros.h in Headers */,
+				668D25231B89ED19001330F5 /* win32.h in Headers */,
 				665C84031B5D57DF00F6C4C1 /* RedisKit.h in Headers */,
-				664EB1A61B6E5F9600B54BD8 /* read.h in Headers */,
-				665C843F1B5D5F4C00F6C4C1 /* macosx.h in Headers */,
-				664EB1A91B6E5F9600B54BD8 /* win32.h in Headers */,
-				664EB19D1B6E5F9600B54BD8 /* async.h in Headers */,
+				668D25271B89ED8B001330F5 /* CocoaPromise.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -342,14 +342,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				664EB1A71B6E5F9600B54BD8 /* sds.c in Sources */,
-				664EB1A11B6E5F9600B54BD8 /* hiredis.c in Sources */,
-				664EB19C1B6E5F9600B54BD8 /* async.c in Sources */,
-				664EB1A51B6E5F9600B54BD8 /* read.c in Sources */,
+				668D25211B89ED19001330F5 /* sds.c in Sources */,
+				668D251A1B89ED19001330F5 /* hiredis.c in Sources */,
+				668D25151B89ED19001330F5 /* async.c in Sources */,
+				668D251F1B89ED19001330F5 /* read.c in Sources */,
 				665C843C1B5D595300F6C4C1 /* CocoaRedis.m in Sources */,
-				664EB1A31B6E5F9600B54BD8 /* net.c in Sources */,
-				665C843A1B5D589200F6C4C1 /* CocoaPromise.m in Sources */,
-				664EB19E1B6E5F9600B54BD8 /* dict.c in Sources */,
+				668D25281B89ED8B001330F5 /* CocoaPromise.m in Sources */,
+				668D251D1B89ED19001330F5 /* net.c in Sources */,
+				668D25171B89ED19001330F5 /* dict.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
