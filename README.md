@@ -267,7 +267,7 @@ Redis supports two subscribe modes:
     }];
 ```
 
-#psubscribe: method returns a *NSDictionary* with the following keys:
+ #psubscribe: method returns a *NSDictionary* with the following keys:
 - @"count" - the number of subscribed clients
 - @"pattern" - the patter which we've been subscribed to
 
@@ -283,7 +283,7 @@ Redis supports two subscribe modes:
     }];
 ```
 
-#subscribe: method returns a *NSDictionary* with the following keys:
+ #subscribe: method returns a *NSDictionary* with the following keys:
 - @"count" - the number of subscribed clients
 - @"channel" - the channel which we've been subscribed to
 
