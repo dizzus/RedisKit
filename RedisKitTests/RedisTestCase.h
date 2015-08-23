@@ -11,7 +11,7 @@
 
 #import "CocoaRedis.h"
 
-#define REDIS_ADDRESS @"192.168.92.169"
+#define REDIS_ADDRESS @"localhost"
 
 @interface RedisTestCase : XCTestCase
 

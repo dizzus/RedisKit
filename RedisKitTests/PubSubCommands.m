@@ -62,7 +62,7 @@
         return [self passed];
     }];
 
-    [self wait];
+    [self waitForExpectationsWithTimeout:3 handler:nil];
 }
 
 #pragma mark PUBSUB
@@ -97,7 +97,7 @@
         return [listener quit];
     }];
 
-    [self wait];
+    [self waitForExpectationsWithTimeout:3 handler:nil];
 }
 
 #pragma mark PUBLISH
@@ -143,7 +143,7 @@
         return [listener quit];
     }];
 
-    [self wait];
+    [self waitForExpectationsWithTimeout:3 handler:nil];
 }
 
 #pragma mark PUNSUBSCRIBE
@@ -171,7 +171,7 @@
         return [listener quit];
     }];
 
-    [self wait];
+    [self waitForExpectationsWithTimeout:3 handler:nil];
 }
 
 
@@ -226,7 +226,7 @@
         return [listener quit];
     }];
 
-    [self wait];
+    [self waitForExpectationsWithTimeout:3 handler:nil];
 }
 
 
@@ -265,7 +265,7 @@
         return [listener quit];
     }];
 
-    [self wait];
+    [self waitForExpectationsWithTimeout:3 handler:nil];
 }
 
 @end

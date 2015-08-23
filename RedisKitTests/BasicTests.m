@@ -28,21 +28,6 @@
     [super tearDown];
 }
 
-- (void)test_Connect {
-    XCTestExpectation* test = [self expectationWithDescription: @"Open connection test"];
-
-    CocoaRedis* redis = [CocoaRedis new];
-    [[[redis connectWithHost: REDIS_ADDRESS] then:^id(id value) {
-        XCTAssertTrue(redis.isConnected);
-        [test fulfill];
-        return [redis close];
-    }] then:^id(id value) {
-        return nil;
-    }];
-    
-    [self waitForExpectationsWithTimeout:2 handler:nil];
-}
-
 - (void)test_Close {
     XCTestExpectation* test = [self expectationWithDescription: @"Close connection test"];
     

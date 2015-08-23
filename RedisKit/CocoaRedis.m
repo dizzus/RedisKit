@@ -528,15 +528,15 @@ static void CollectZSetKeys(CocoaRedis* redis, id key, CocoaPromise* cursorPromi
         serverHost = [serverHost substringToIndex: pos.location];
     }
     
-    return [self connectWithHost: serverHost port: [NSNumber numberWithInt: serverPort]];
+    return [self connectWithHost: serverHost port: serverPort];
 }
 
-- (CocoaPromise *)connectWithHost:(NSString *)serverHost port:(NSNumber*)serverPort {
+- (CocoaPromise *)connectWithHost:(NSString *)serverHost port:(int)serverPort {
     NSAssert(!self.isConnected, @"Already connected");
     
     CocoaPromise* result = [CocoaPromise new];
     
-    self.ctx = redisAsyncConnect(serverHost.UTF8String, serverPort.intValue);
+    self.ctx = redisAsyncConnect(serverHost.UTF8String, serverPort);
     
     if( self.ctx == NULL || self.ctx->err ) {
         NSError* err = [NSError errorWithDomain: [NSString stringWithUTF8String: self.ctx->errstr]

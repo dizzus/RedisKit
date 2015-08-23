@@ -10,7 +10,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "RedisKit/CocoaRedis.m"
-            timestampString = "461347041.275707"
+            timestampString = "461867694.234021"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "356"
@@ -56,7 +56,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "RedisKit/CocoaRedis.m"
-            timestampString = "461347041.275707"
+            timestampString = "461867694.234021"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "247"
@@ -538,6 +538,22 @@
             startingLineNumber = "388"
             endingLineNumber = "388"
             landmarkName = "-test_RESTORE"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "RedisKitTests/PubSubCommands.m"
+            timestampString = "461589781.265361"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "43"
+            endingLineNumber = "43"
+            landmarkName = "-test_PSUBSCRIBE"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>

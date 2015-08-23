@@ -14,12 +14,12 @@ extern NSString * const CocoaRedisMessageNotification;
 @interface CocoaRedis : NSObject
 
 @property (readonly) NSString* host;
-@property (readonly) NSNumber* port;
+@property (readonly) int port;
 @property (readonly) BOOL isConnected;
 
 - (instancetype) init;
 - (CocoaPromise*) connectWithHost: (NSString*)serverHost;
-- (CocoaPromise*) connectWithHost: (NSString*)serverHost port: (NSNumber*)serverPort;
+- (CocoaPromise*) connectWithHost: (NSString*)serverHost port: (int)serverPort;
 - (CocoaPromise*) close;
 
 - (CocoaPromise*) command: (NSArray*)arguments;

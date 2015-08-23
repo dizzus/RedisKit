@@ -91,6 +91,8 @@
 		6664A3341B6BAB0C00067E96 /* RedisTestCase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RedisTestCase.m; sourceTree = "<group>"; };
 		6664A3361B6BAB2800067E96 /* RedisTestCase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RedisTestCase.h; sourceTree = "<group>"; };
 		6664A3371B6BB01900067E96 /* TranscationsCommands.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TranscationsCommands.m; sourceTree = "<group>"; };
+		668D25031B89EBBF001330F5 /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
+		668D25041B89EBBF001330F5 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		66B4D84F1B68DCD900EEA922 /* SortedSetsCommands.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SortedSetsCommands.m; sourceTree = "<group>"; };
 		66B754F51B681C5900BB822B /* HashesCommands.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HashesCommands.m; sourceTree = "<group>"; };
 		66CEB0F51B6F9A4D0083B575 /* ClusterCommands.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ClusterCommands.m; sourceTree = "<group>"; };
@@ -121,6 +123,8 @@
 		665C83F31B5D57DF00F6C4C1 = {
 			isa = PBXGroup;
 			children = (
+				668D25031B89EBBF001330F5 /* LICENSE */,
+				668D25041B89EBBF001330F5 /* README.md */,
 				665C84361B5D586700F6C4C1 /* Promises */,
 				665C84191B5D57F900F6C4C1 /* HiRedis */,
 				665C83FF1B5D57DF00F6C4C1 /* RedisKit */,
@@ -476,6 +480,7 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx10.9;
 				SKIP_INSTALL = YES;
 			};
 			name = Debug;
@@ -493,6 +498,7 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx10.9;
 				SKIP_INSTALL = YES;
 			};
 			name = Release;
