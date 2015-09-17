@@ -583,43 +583,59 @@ static void CollectZSetKeys(CocoaRedis* redis, id key, CocoaPromise* cursorPromi
     return self.ctx != NULL && self.ctx->c.flags & REDIS_CONNECTED;
 }
 
+typedef struct {
+    char const** argv;
+    size_t* argvlen;
+} argvbuf;
+
+static void freebuf(argvbuf* buf) {
+    if(buf) {
+        free((void*) buf->argv);
+        free((void*) buf->argvlen);
+    }
+}
+
+static CocoaPromise* reject(CocoaPromise* result, NSString* reason, argvbuf* buf) {
+    freebuf(buf);
+    NSError* err = [NSError errorWithDomain:reason code:0 userInfo:nil];
+    [result reject:err];
+    return result;
+}
+
 - (CocoaPromise *)command:(NSArray *)arguments {
     CocoaPromise* result = [CocoaPromise new];
     
-    if( !self.isConnected ) {
-        NSError* err = [NSError errorWithDomain: @"Not connected" code:0 userInfo:nil];
-        [result reject: err];
-        return result;
-    }
-
+    if( !self.isConnected ) return reject(result, @"Not connected", NULL);
+        
+    argvbuf buf = {NULL, NULL};
     const NSUInteger count = arguments.count;
+
+    buf.argv = calloc(count, sizeof(char*));
+    buf.argvlen = calloc(count, sizeof(size_t));
     
-    const char* argv[count];
-    size_t argvlen[count];
+    if( !buf.argv || !buf.argvlen ) return reject(result, @"Out of memory", &buf);
 
     for( int i = 0; i < count; ++i ) {
         id arg = [arguments objectAtIndex: i];
         
         if( [arg isKindOfClass: [NSString class]] ) {
-            argv   [i] = [arg UTF8String];
-            argvlen[i] = strlen(argv[i]);
+            buf.argv   [i] = [arg UTF8String];
+            buf.argvlen[i] = strlen(buf.argv[i]);
         } else if( [arg isKindOfClass: [NSNumber class]] ) {
-            argv   [i] = [[arg stringValue] UTF8String];
-            argvlen[i] = strlen(argv[i]);
+            buf.argv   [i] = [[arg stringValue] UTF8String];
+            buf.argvlen[i] = strlen(buf.argv[i]);
         } else if( [arg isKindOfClass: [NSData class]] ) {
-            argv   [i] = [arg bytes];
-            argvlen[i] = [arg length];
+            buf.argv   [i] = [arg bytes];
+            buf.argvlen[i] = [arg length];
         } else {
-            NSError* err = [NSError errorWithDomain:@"Invalid command argument" code:0 userInfo:nil];
-            [result reject: err];
-            return result;
+            return reject(result, @"Invalid command argument", &buf);
         }
     }
     
     int rc = redisAsyncCommandArgv(self.ctx,
                                    commandCallback,
                                    (void*) CFBridgingRetain(result),
-                                   (int) count, argv, argvlen);
+                                   (int) count, buf.argv, buf.argvlen);
     
     if( rc != REDIS_OK ) {
         NSError* err = [NSError errorWithDomain: [NSString stringWithUTF8String: self.ctx->errstr]
@@ -627,6 +643,8 @@ static void CollectZSetKeys(CocoaRedis* redis, id key, CocoaPromise* cursorPromi
                                        userInfo: nil];
         [result reject: err];
     }
+    
+    freebuf(&buf);
 
     return result;
 }
